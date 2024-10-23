@@ -1,9 +1,11 @@
 <x-html>
     <div class="hero bg-base-200 min-h-screen">
-        <div class="w-10/12">
-            <div class="hero-content flex flex-row space-x-20">
+        <div class="w-10/12 mx-auto">
+            <!-- Hacemos que la disposición cambie en pantallas pequeñas -->
+            <div class="hero-content flex flex-col lg:flex-row lg:space-x-20 space-y-0 lg:space-y-0">
                 <div class="text-left">
-                    <h1 class="text-5xl font-bold font-patrick-hand">Registrate!</h1>
+                    <!-- Ajuste responsivo del tamaño de texto -->
+                    <h1 class="text-5xl lg:text-8xl font-bold font-patrick-hand">¡Regístrate!</h1>
                     <p class="py-6">
                         Para empezar a construir una vida sustentable
                     </p>
@@ -11,21 +13,22 @@
                 <div class="card bg-base-100 w-full max-w-xl shrink-0 shadow-2xl">
                     <form class="card-body" id="registrationForm" action="/login" method="POST">
                         @csrf
+                        <!-- Ajustamos la disposición para pantallas pequeñas -->
                         <div id="step1" class="transition-opacity duration-500 opacity-100 space-y-4">
-                            <div class="flex flex-row space-x-8">
-                                <div class="form-control w-3/12">
+                            <div class="flex flex-col lg:flex-row lg:space-x-8 space-y-4 lg:space-y-0">
+                                <div class="form-control w-full lg:w-3/12">
                                     <label class="label">
                                         <span class="label-text">Nombre</span>
                                     </label>
                                     <input type="text" name="nombre" placeholder="Juan" class="input input-bordered transition duration-300 ease-in-out transform focus:scale-105 focus:border-blue-500 focus:ring-2 focus:ring-blue-500" required/>
                                 </div>
-                                <div class="form-control w-3/12">
+                                <div class="form-control w-full lg:w-3/12">
                                     <label class="label">
                                         <span class="label-text">Apellido Paterno</span>
                                     </label>
                                     <input type="text" name="apellido_paterno" placeholder="Pérez" class="input input-bordered transition duration-300 ease-in-out transform focus:scale-105 focus:border-blue-500 focus:ring-2 focus:ring-blue-500" required/>
                                 </div>
-                                <div class="form-control w-3/12">
+                                <div class="form-control w-full lg:w-3/12">
                                     <label class="label">
                                         <span class="label-text">Apellido Materno</span>
                                     </label>
