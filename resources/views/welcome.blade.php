@@ -41,7 +41,7 @@
                         <img
                             src="{{asset('img/clothing.jpg')}}"
                             alt="Shoes"
-                            class="rounded-full aspect-square"/>
+                            class="rounded-full aspect-square w-10/12"/>
                     </figure>
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Ropa</h2>
@@ -55,7 +55,7 @@
                         <img
                             src="{{asset('img/shoes.jpg')}}"
                             alt="Shoes"
-                            class="rounded-full aspect-square"/>
+                            class="rounded-full aspect-square w-10/12"/>
                     </figure>
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Calzado</h2>
@@ -69,7 +69,7 @@
                         <img
                             src="{{asset('img/toys.jpg')}}"
                             alt="Shoes"
-                            class="rounded-full aspect-square"/>
+                            class="rounded-full aspect-square w-10/12"/>
                     </figure>
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Juguetes</h2>

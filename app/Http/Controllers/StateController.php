@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\State;
 use Illuminate\Http\Request;
 
-class StateController extends BaseController
+class StateController extends ResourceController
 {
     public function __construct()
     {

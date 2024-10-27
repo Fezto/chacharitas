@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-abstract class BaseController extends Controller
+abstract class ResourceController extends Controller
 {
     protected $model;
 

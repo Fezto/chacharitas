@@ -8,7 +8,7 @@
         <ul class="menu menu-horizontal space-x-10 justify-center">
             <li><a href="{{ route('welcome.index') }}" class="hover:bg-accent btn btn-ghost transition duration-300">Inicio</a>
             </li>
-            <li><a href="/store" class="hover:bg-secondary btn btn-ghost transition duration-300">Productos</a></li>
+            <li><a href="{{ route('shop.index') }}" class="hover:bg-secondary btn btn-ghost transition duration-300">Productos</a></li>
             <li>
                 <a href="{{ route('about.index') }}" class="hover:bg-error btn btn-ghost transition duration-300">Sobre
                     nosotros</a>
