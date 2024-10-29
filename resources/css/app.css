@@ -19,3 +19,11 @@ textarea {
 textarea:focus {
     transform: scale(1.02); /* Aumenta el tamaño al 102% */
 }
+
+.fi-fo-wizard-step {
+    @apply bg-neutral;
+}
+
+.fi-fo-wizard-header{
+    @apply bg-base-300;
+}
