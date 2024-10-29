@@ -28,47 +28,53 @@ class RegisterForm extends Component implements HasForms
             Wizard::make([
                 Wizard\Step::make('Información Personal')
                     ->schema([
-                        TextInput::make('data.nombre')
-                            ->label('Nombre')
-                            ->required(),
+                        // Utilizando columnas para organizar los campos
+                        \Filament\Forms\Components\Grid::make(2)->schema([
+                            TextInput::make('data.nombre')
+                                ->label('Nombre')
+                                ->required(),
 
-                        TextInput::make('data.apellido_paterno')
-                            ->label('Apellido Paterno')
-                            ->required(),
+                            TextInput::make('data.apellido_paterno')
+                                ->label('Apellido Paterno')
+                                ->required(),
 
-                        TextInput::make('data.apellido_materno')
-                            ->label('Apellido Materno')
-                            ->required(),
+                            TextInput::make('data.apellido_materno')
+                                ->label('Apellido Materno')
+                                ->required(),
 
-                        TextInput::make('data.email')
-                            ->label('Email')
-                            ->email()
-                            ->required(),
+                            TextInput::make('data.email')
+                                ->label('Email')
+                                ->email()
+                                ->required(),
 
-                        TextInput::make('data.password')
-                            ->label('Password')
-                            ->password()
-                            ->required(),
+                            TextInput::make('data.password')
+                                ->label('Password')
+                                ->password()
+                                ->required(),
+                        ]),
+
                     ]),
 
                 Wizard\Step::make('Dirección')
                     ->schema([
-                        Select::make('data.estado')
-                            ->label('Estado')
-                            ->options(fn() => $this->getStates())
-                            ->required(),
+                        \Filament\Forms\Components\Grid::make(2)->schema([
+                            Select::make('data.estado')
+                                ->label('Estado')
+                                ->options(fn() => $this->getStates())
+                                ->required(),
 
-                        Select::make('data.municipio')
-                            ->label('Municipio')
-                            ->required(),
+                            Select::make('data.municipio')
+                                ->label('Municipio')
+                                ->required(),
 
-                        TextInput::make('data.calle')
-                            ->label('Calle')
-                            ->required(),
+                            TextInput::make('data.calle')
+                                ->label('Calle')
+                                ->required(),
 
-                        TextInput::make('data.codigo_postal')
-                            ->label('Código Postal')
-                            ->required(),
+                            TextInput::make('data.codigo_postal')
+                                ->label('Código Postal')
+                                ->required(),
+                        ]),
                     ]),
             ])->submitAction('Registrarse') // Define un texto para el botón de "submit"
         ]);
