@@ -21,7 +21,7 @@
                                         <span class="label-text">Nombre</span>
                                         <x-required-star></x-required-star>
                                     </label>
-                                    <x-input type="text" name="nombre" placeholder="Juan" required/>
+                                    <x-input type="text" name="nombre" placeholder="Juasdfdsn" required/>
                                 </div>
                                 <div class="form-control w-full lg:w-3/12">
                                     <label class="label">

@@ -20,7 +20,7 @@
         </div>
 
         <!-- Formulario de contacto -->
-        <livewire:contact-modal></livewire:contact-modal>
+        <livewire:contakt-form></livewire:contakt-form>
 
         <!-- Parte inferior con hero tradicional -->
         <section class="h-[350px] bg-primary bg-opacity-20 flex items-center justify-center"></section>

@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
+
+/* Asegúrate de que Tailwind esté configurado correctamente en tu proyecto */
+input {
+    @apply input transition duration-300 ease-in-out !important;
+}
+
+input:focus {
+    transform: scale(1.02); /* Aumenta el tamaño al 102% */
+}
+
+textarea {
+    @apply textarea transition duration-300 ease-in-out !important;
+}
+
+textarea:focus {
+    transform: scale(1.02); /* Aumenta el tamaño al 102% */
+}
