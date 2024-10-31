@@ -4,7 +4,7 @@
             {{ $this->form }}
 
             <div class="flex justify-center mt-5">
-                <button class="btn btn-primary w-full " >Enviar
+                <button class="btn btn-primary w-full " >Envia
                 </button>
             </div>
         </form>
