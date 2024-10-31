@@ -25,5 +25,33 @@ textarea:focus {
 }
 
 .fi-fo-wizard-header{
-    @apply bg-base-300;
+    @apply bg-neutral;
+}
+
+.fi-fo-field-wrp-error-message{
+    @apply text-xs text-red-600;
+}
+
+sup{
+    @apply text-red-600 !important;
+}
+
+/* Selecciona elementos con exactamente estas clases */
+[class="flex items-center justify-between gap-x-3 px-6 pb-6"] {
+    @apply bg-neutral;
+}
+
+
+
+.fi-fo-wizard-header-step-icon{
+    @apply text-black;
+}
+
+.fi-btn{
+    @apply btn outline-0 !important;
+}
+
+::placeholder {
+    color: #999 !important; /* Cambia el color del placeholder */
+    opacity: 0.5; /* Ajusta la opacidad del placeholder */
 }
