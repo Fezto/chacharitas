@@ -16,7 +16,7 @@
                     </p>
                 </div>
                 <div class="w-4/12">
-                    <img src="https://picsum.photos/400/400" alt="About Hero">
+                    <img src="{{asset('img/logo.png')}}" alt="About Hero">
                 </div>
             </div>
         </div>

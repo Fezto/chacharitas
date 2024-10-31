@@ -48,22 +48,6 @@ class RegisterForm extends Component implements HasForms
         $this->data['colonia'] = null;
     }
 
-    public function updatedDataCodigoPostal($value)
-    {
-        $postalData = Neighborhood::where('postal_code', $value)->first();
-
-        if ($postalData) {
-            $this->data['estado'] = $postalData->state_id;
-            $this->updatedDataEstado($postalData->state_id);
-
-            $this->data['municipio'] = $postalData->municipality_id;
-            $this->updatedDataMunicipio($postalData->municipality_id);
-        } else {
-            // Debugging: Log or display a message if no postal data is found
-            logger()->warning("No postal data found for postal code: $value");
-        }
-    }
-
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -93,9 +77,16 @@ class RegisterForm extends Component implements HasForms
                                 ->required(),
 
                             TextInput::make('data.password')
-                                ->label('Password')
+                                ->label('Contraseña')
                                 ->password()
                                 ->placeholder('Ingrese su contraseña')
+                                ->required(),
+
+                            TextInput::make('data.password_confirmation')
+                                ->label('Confirmar Contraseña')
+                                ->password()
+                                ->placeholder('Confirme su contraseña')
+                                ->same('data.password')
                                 ->required(),
                         ]),
                     ]),
@@ -121,13 +112,6 @@ class RegisterForm extends Component implements HasForms
                                 ->label('Calle')
                                 ->placeholder('Ingrese su calle')
                                 ->required(),
-
-                            TextInput::make('data.codigo_postal')
-                                ->label('Código Postal')
-                                ->placeholder('Ingrese su código postal')
-                                ->required()
-                                ->reactive()
-                                ->afterStateUpdated(fn($state) => $this->updatedDataCodigoPostal($state)),
 
                             Select::make('data.colonia')
                                 ->label('Colonia')

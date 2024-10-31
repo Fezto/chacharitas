@@ -12,8 +12,8 @@
                         ¿Cuándo?
                     </p>
                 </div>
-                <div class="w-4/12  flex bg-accent justify-center">
-                    <img src="https://picsum.photos/500/500" alt="About Hero">
+                <div class="w-4/12  flex justify-center">
+                    <img src="{{asset('svg/recycle.svg')}}" alt="About Hero">
                 </div>
             </div>
         </div>

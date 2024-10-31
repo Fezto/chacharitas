@@ -5,7 +5,7 @@
 
 /* Asegúrate de que Tailwind esté configurado correctamente en tu proyecto */
 input {
-    @apply input transition duration-300 ease-in-out !important;
+    @apply input transition duration-300 ease-in-out ;
 }
 
 input:focus {
