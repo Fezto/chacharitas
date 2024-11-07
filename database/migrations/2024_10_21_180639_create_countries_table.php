@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('countries', function (Blueprint $table) {
-            $table->integer('id')->unsigned(); // Usar integer en lugar de increments
+            $table->id(); // Usar integer en lugar de increments
             $table->string('name', 50)->charset('utf8')->collation('utf8_unicode_ci')->default(''); // Nombre del país
             $table->timestamps();
 
