@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Neighborhood;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -27,8 +29,11 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'phone_number' => fake()->phoneNumber(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'address_id' => DB::table('addresses')->inRandomOrder()->first()->id,
+            'gender_id' => DB::table('genders')->inRandomOrder()->first()->id,
         ];
     }
 

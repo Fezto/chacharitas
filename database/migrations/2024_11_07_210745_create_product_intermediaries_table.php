@@ -66,14 +66,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::create('brand_product', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Brand::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-        });
     }
 
     /**
@@ -81,7 +73,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('brand_product');
         Schema::dropIfExists('attribute_product');
         Schema::dropIfExists('size_product');
         Schema::dropIfExists('material_product');
