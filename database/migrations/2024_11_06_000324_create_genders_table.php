@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         Schema::table('users', function(Blueprint $table){
-            $table->foreignIdFor(Gender::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(Gender::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

@@ -13,12 +13,14 @@ class GenderSeeder extends Seeder
      */
     public function run(): void
     {
-        Gender::create([
-            'name' => 'Masculino',
-        ]);
+        $data = [
+            ['name' => 'Masculino'],
+            ['name' => 'Femenino']
+        ];
 
-        Gender::create([
-            'name' => 'Femenino',
-        ]);
+        foreach ($data as $item) {
+            Gender::create($item);
+        }
+
     }
 }

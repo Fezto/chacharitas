@@ -3,55 +3,16 @@
 @tailwind utilities;
 @tailwind variants;
 
-/* Asegúrate de que Tailwind esté configurado correctamente en tu proyecto */
-input {
-    @apply input transition duration-300 ease-in-out ;
-}
 
-input:focus {
-    transform: scale(1.02); /* Aumenta el tamaño al 102% */
-}
-
-textarea {
-    @apply textarea transition duration-300 ease-in-out !important;
-}
-
-textarea:focus {
-    transform: scale(1.02); /* Aumenta el tamaño al 102% */
-}
-
-.fi-fo-wizard-step {
-    @apply bg-neutral;
-}
-
-.fi-fo-wizard-header{
-    @apply bg-neutral;
+.fi-btn{
+    @apply p-4;
 }
 
 .fi-fo-field-wrp-error-message{
-    @apply text-xs text-red-600;
+    @apply text-xs;
 }
 
-sup{
-    @apply text-red-600 !important;
+.fi-fo-field-wrp-helper-text{
+    @apply text-xs;
 }
 
-/* Selecciona elementos con exactamente estas clases */
-[class="flex items-center justify-between gap-x-3 px-6 pb-6"] {
-    @apply bg-neutral;
-}
-
-
-
-.fi-fo-wizard-header-step-icon{
-    @apply text-black;
-}
-
-.fi-btn{
-    @apply btn outline-0 !important;
-}
-
-::placeholder {
-    color: #999 !important; /* Cambia el color del placeholder */
-    opacity: 0.5; /* Ajusta la opacidad del placeholder */
-}

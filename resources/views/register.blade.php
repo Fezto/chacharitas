@@ -10,7 +10,6 @@
                         Para empezar a construir una vida sustentable
                     </p>
                 </div>
-
                 <livewire:register-form></livewire:register-form>
             </div>
         </div>

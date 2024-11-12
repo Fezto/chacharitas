@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -28,6 +27,11 @@ class DatabaseSeeder extends Seeder
             AddressSeeder::class,
             GenderSeeder::class,
             UserSeeder::class,
+            CaregorySeeder::class,
+            ColorSeeder::class,
+            MaterialSeeder::class,
+            SizeSeeder::class,
+            BrandSeeder::class
         ]);
     }
 }

@@ -24,7 +24,7 @@
             </svg>
         </button>
         @guest
-            <form action="{{ route('login.create') }}" method="GET">
+            <form action="{{ route('register.create') }}" method="GET">
                 @csrf
                 <button type="submit" class="btn">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"

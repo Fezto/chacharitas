@@ -2,10 +2,13 @@
 
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\NeighborhoodController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StateController;
 use App\Livewire\ContactModal;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+
+Auth::routes(['verify' => true]);
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,10 +20,7 @@ Route::get('/shop', function() {
 })->name('shop.index');
 
 
-Route::get('/login', [LoginController::class, 'create'])->name('login.create');
-Route::post('/login', function () {
-    dd("pepe pecas");
-})->name('login.store');
+Route::get('/register', [RegisterController::class, 'create'])->name('register.create');
 
 Route::get('/contact', function () {
     return view('contact');

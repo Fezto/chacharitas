@@ -13,15 +13,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('states', function (Blueprint $table) {
-            $table->id(); // Usar integer en lugar de id() para un id sin auto-incremento
-            $table->string('name', 50)->charset('utf8')->collation('utf8_unicode_ci')->default(''); // Nombre del estado
-            $table->foreignIdFor(Country::class)->default(0); // Campo de país
+            $table->id();
+            $table->string('name', 50)->charset('utf8')->collation('utf8_unicode_ci')->index();
+            $table->foreignIdFor(Country::class)->constrained()->onDelete('cascade'); // Relación con el país, asegurando la integridad referencial
 
-            // Establecer charset y collation para la tabla
+
             $table->charset = 'utf8mb4';
             $table->collation = 'utf8mb4_unicode_ci';
+            $table->engine = 'InnoDB';
         });
-
     }
 
     /**
@@ -32,3 +32,4 @@ return new class extends Migration
         Schema::dropIfExists('states');
     }
 };
+
