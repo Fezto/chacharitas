@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\Address;
 use App\Models\Municipality;
@@ -15,9 +16,12 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -151,29 +155,31 @@ class RegisterForm extends Component implements HasForms
     /**
      * @throws ValidationException
      */
-    public function submit(): void
+    public function submit()
     {
         $this->validate();
 
         try {
-            $address = Address::create([
-                'street' => $this->data['street'],
-                'neighborhood_id' => $this->data['neighborhood_id'],
-            ]);
 
-            $user = User::create([
-                'name' => $this->data['name'],
-                'last_name' => $this->data['last_name'],
-                'second_last_name' => $this->data['second_last_name'],
-                'email' => $this->data['email'],
-                'password' => Hash::make($this->data['password']),
-                'address_id' => $address->id,
-            ]);
+            // Llamar al metodo de la clase CreateNewUser
+            $user = app(CreateNewUser::class)->create($this->data);
+
+            // Emitir evento de registro exitoso
             event(new Registered($user));
-            $this->redirect(route('welcome.index'));
+
+            // Autenticar al usuario automáticamente si no necesita verificación
+            Auth::login($user);
+
+            if ($user instanceof MustVerifyEmail) {
+                // Si el email necesita verificación
+                session()->flash('status', 'Verification link sent!');
+                return redirect('/email/verify'); // O la ruta configurada
+            }
 
 
-            session()->flash('message', 'Usuario registrado exitosamente.');
+
+            return redirect()->intended(route('welcome.index')); // O tu ruta personalizada
+
         } catch (\Exception $e) {
             session()->flash('error', 'Hubo un problema al registrar el usuario.');
         }

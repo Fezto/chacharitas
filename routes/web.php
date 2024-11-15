@@ -2,13 +2,9 @@
 
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\NeighborhoodController;
-use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\StateController;
-use App\Livewire\ContactModal;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 
-Auth::routes(['verify' => true]);
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,7 +16,6 @@ Route::get('/shop', function() {
 })->name('shop.index');
 
 
-Route::get('/register', [RegisterController::class, 'create'])->name('register.create');
 
 Route::get('/contact', function () {
     return view('contact');
@@ -34,8 +29,6 @@ Route::get('/municipalities/{municipality}/neighborhoods', [NeighborhoodControll
 
 Route::get('/neighborhoods', [NeighborhoodController::class, 'index'])->name('neighborhoods.index');
 
-
-// Route::get('/contact-modal', [ContactModal::class]);
 
 
 
