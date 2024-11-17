@@ -17,7 +17,34 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased">
+<!-- Mensajes Flash -->
+@if(session('success'))
+    <x-alert type="alert-success">
+        {{ session('success') }}
+    </x-alert>
+@endif
+
+@if(session('error'))
+    <x-alert type="alert-error">
+        {{ session('error') }}
+    </x-alert>
+@endif
+
+@if(session('info'))
+    <x-alert type="alert-info">
+        {{ session('info') }}
+    </x-alert>
+@endif
+
+@if(session('warning'))
+    <x-alert type="alert-warning">
+        {{ session('warning') }}
+    </x-alert>
+@endif
+
+<!-- Contenido de las vistas -->
 {{ $slot }}
+
 @filamentScripts
 @vite('resources/js/app.js')
 </body>

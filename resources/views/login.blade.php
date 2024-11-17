@@ -11,6 +11,7 @@
                     </p>
                 </div>
                 <livewire:login-form></livewire:login-form>
+
             </div>
         </div>
     </div>

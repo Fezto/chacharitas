@@ -52,7 +52,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::verifyEmailView(function () {
-            return view('welcome');
+            return view('email-verify');
         });
     }
 }

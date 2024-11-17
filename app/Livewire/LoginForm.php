@@ -63,7 +63,7 @@ class LoginForm extends Component implements HasForms
     /**
      * @throws ValidationException
      */
-    public function submit(): void
+    public function submit()
     {
         $this->validate();
 
@@ -72,7 +72,16 @@ class LoginForm extends Component implements HasForms
             'password' => $this->data['password']
         ];
 
-        Auth::attempt($credentials);
+        if (Auth::attempt($credentials)) {
+            // Si las credenciales son correctas, redirigir al usuario
+            return redirect()->intended('/'); // Redirige a la página deseada
+        }
+
+        // Si el inicio de sesión falla, lanzar un flash con el mensaje de error
+        session()->flash('error', 'Las credenciales proporcionadas son incorrectas.');
+
+        // Redirigir de nuevo a la página de inicio de sesión o la misma página
+        return redirect()->back();
 
     }
 

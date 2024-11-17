@@ -3,6 +3,7 @@
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\NeighborhoodController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,7 +16,7 @@ Route::get('/shop', function() {
    return view('shop');
 })->name('shop.index');
 
-
+Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)->name('verification.verify');
 
 Route::get('/contact', function () {
     return view('contact');

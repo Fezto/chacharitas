@@ -65,17 +65,27 @@
                     <span class="badge badge-xs badge-primary indicator-item"></span>
                 </div>
             </button>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                         stroke="currentColor" class="h-6 w-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
-                    </svg>
-                    Cerrar Sesión
-                </button>
-            </form>
+            <div class="dropdown dropdown-bottom dropdown-end">
+                <!-- El botón del dropdown será la foto de perfil -->
+                <div tabindex="0" role="button" class="btn m-1 p-0">
+                    <img src="{{ auth()->user()->profile_picture ?? asset('img/default-avatar.png') }}" alt="Foto de perfil" class="w-11 h-10 rounded-full object-cover">
+                </div>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <!-- Mostrar nombre del usuario si está autenticado -->
+                    @auth
+                        <li><a class="font-semibold">{{ auth()->user()->name }}</a></li>
+                        <li><a href="#">Ver perfil</a></li>
+                        <li>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full text-left">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
+                    @endauth
+                </ul>
+            </div>
         @endauth
     </div>
 </div>
