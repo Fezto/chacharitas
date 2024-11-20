@@ -19,6 +19,8 @@ return new class extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->id()->autoIncrement();
             $table->string('street');
+            $table->string('street_number');
+            $table->string('unit_number')->nullable();
             $table->foreignIdFor(Neighborhood::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();

@@ -19,25 +19,25 @@
 <body class="antialiased">
 <!-- Mensajes Flash -->
 @if(session('success'))
-    <x-alert type="alert-success">
+    <x-alert type="alert-success" class="rounded-none">
         {{ session('success') }}
     </x-alert>
 @endif
 
 @if(session('error'))
-    <x-alert type="alert-error">
+    <x-alert type="alert-error" class="rounded-none">
         {{ session('error') }}
     </x-alert>
 @endif
 
 @if(session('info'))
-    <x-alert type="alert-info">
+    <x-alert type="alert-info" class="rounded-none">
         {{ session('info') }}
     </x-alert>
 @endif
 
 @if(session('warning'))
-    <x-alert type="alert-warning">
+    <x-alert type="alert-warning" class="rounded-none">
         {{ session('warning') }}
     </x-alert>
 @endif

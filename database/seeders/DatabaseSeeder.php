@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             MaterialSeeder::class,
             SizeSeeder::class,
-            BrandSeeder::class
+            BrandSeeder::class,
+            RoleSeeder::class
         ]);
     }
 }

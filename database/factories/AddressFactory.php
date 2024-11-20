@@ -20,6 +20,8 @@ class AddressFactory extends Factory
         return [
             'street' => fake()->streetName(),
             'neighborhood_id' => DB::table('neighborhoods')->inRandomOrder()->first()->id,
+            'street_number' => fake()->buildingNumber(),
+            'unit_number' => fake()->optional(0.3)->buildingNumber(),
         ];
     }
 }

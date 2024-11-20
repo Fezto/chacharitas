@@ -51,6 +51,8 @@ class CreateNewUser implements CreatesNewUsers
         $address = Address::create([
             'street' => $input['street'],
             'neighborhood_id' => $input['neighborhood_id'],
+            'street_number' => $input['street_number'],
+            'unit_number' => $input['unit_number']
         ]);
 
         /** @var User $user */

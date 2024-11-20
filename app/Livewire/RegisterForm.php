@@ -140,12 +140,26 @@ class RegisterForm extends Component implements HasForms
                                 ->placeholder('Ingrese su calle')
                                 ->required()
                         ]),
-                        TextInput::make('data.postal_code')
-                            ->label('Código postal')
-                            ->placeholder('Ingrese su código postal')
-                            ->regex('/^\d+$/')
-                            ->required()
-                            ->length(5)
+                        \Filament\Forms\Components\Grid::make(3)->schema([
+                            TextInput::make('data.postal_code')
+                                ->label('Código postal')
+                                ->placeholder('Ingrese su código postal')
+                                ->regex('/^\d+$/')
+                                ->required()
+                                ->length(5),
+
+                            TextInput::make('data.street_number')
+                                ->label('Número exterior')
+                                ->placeholder('Ingrese su número exterior')
+                                ->regex('/^\d+$/')
+                                ->required(),
+
+                            TextInput::make('data.unit_number')
+                                ->label('Número exterior')
+                                ->placeholder('Ingrese su número interior')
+                                ->regex('/^\d+$/')
+                        ]),
+
                     ]),
             ])->submitAction(new HtmlString("<button class='btn btn-secondary'>Enviar</button>"))
                 ->cancelAction(new HtmlString("<button class='btn btn-primary'>Cancelar</button>"))

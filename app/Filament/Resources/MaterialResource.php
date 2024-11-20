@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ColorResource\Pages;
-use App\Filament\Resources\ColorResource\RelationManagers;
-use App\Models\Color;
+use App\Filament\Resources\MaterialResource\Pages;
+use App\Filament\Resources\MaterialResource\RelationManagers;
+use App\Models\Material;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,14 +13,14 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ColorResource extends Resource
+class MaterialResource extends Resource
 {
     protected static ?string $navigationGroup = 'Catálogos';
-    protected static ?string $modelLabel = 'color';
-    protected static ?string $pluralModelLabel = 'colores';
-    protected static ?string $model = Color::class;
+    protected static ?string $modelLabel = 'material';
+    protected static ?string $pluralModelLabel = 'materiales';
+    protected static ?string $model = Material::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -74,9 +74,9 @@ class ColorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListColors::route('/'),
-            'create' => Pages\CreateColor::route('/create'),
-            'edit' => Pages\EditColor::route('/{record}/edit'),
+            'index' => Pages\ListMaterials::route('/'),
+            'create' => Pages\CreateMaterial::route('/create'),
+            'edit' => Pages\EditMaterial::route('/{record}/edit'),
         ];
     }
 }

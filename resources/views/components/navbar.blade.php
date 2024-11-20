@@ -83,6 +83,9 @@
                                 </button>
                             </form>
                         </li>
+                        @can('access panel')
+                            <li><a href="/admin">Panel de Administración</a></li>
+                        @endcan
                     @endauth
                 </ul>
             </div>

@@ -17,15 +17,14 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $user = User::create([
             'name' => 'root',
             'last_name' => 'dios',
             'second_last_name' => 'arceus',
             'email' => 'axolotlscriptjs@gmail.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('root'),
+            'password' => Hash::make('root1234'),
             'phone_number' => '1234567890',
-            'remember_token' => Str::random(10),
             'address_id' => Address::inRandomOrder()->first()->id,
             'gender_id' => Gender::inRandomOrder()->first()->id,
         ]);
