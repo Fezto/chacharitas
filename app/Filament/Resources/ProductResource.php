@@ -3,15 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Filament\Resources\ProductResource\RelationManagers\ColorsRelationManager;
+use App\Filament\Resources\ProductResource\RelationManagers\CategoriesRelationManager;
+use App\Filament\Resources\ProductResource\RelationManagers\GendersRelationManager;
+use App\Filament\Resources\ProductResource\RelationManagers\SizesRelationManager;
+use App\Models\Color;
 use App\Models\Product;
 use Filament\Forms;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class ProductResource extends Resource
 {
@@ -24,62 +28,115 @@ class ProductResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('$'),
-                Forms\Components\TextInput::make('quantity')
-                    ->numeric(),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\Select::make('brand_id')
-                    ->relationship('brand', 'name')
-                    ->required(),
-            ]);
+        return $form->schema([
+            Wizard::make([
+                Wizard\Step::make('Datos principales')
+                    ->icon('heroicon-m-information-circle')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
+
+                        Forms\Components\TextInput::make('price')
+                            ->label('Precio')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$'),
+
+                        Forms\Components\TextInput::make('quantity')
+                            ->label('Cantidad')
+                            ->required()
+                            ->numeric(),
+
+                        Forms\Components\Select::make('user_id')
+                            ->label('Usuario')
+                            ->relationship('user', 'name')
+                            ->required(),
+                    ])->columns(1),
+
+                Wizard\Step::make('Detalles del producto')
+                    ->icon('heroicon-m-cog')
+                    ->schema([
+                        Forms\Components\Select::make('brand_id')
+                            ->label('Marca')
+                            ->relationship('brand', 'name')
+                            ->required(),
+
+                        Forms\Components\Select::make('categories')
+                            ->multiple()
+                            ->label('Categorías')
+                            ->relationship('categories', 'name')
+                            ->required()
+                            ->preload(),
+
+                        Forms\Components\Select::make('colors')
+                            ->multiple()
+                            ->label('Colores')
+                            ->relationship('colors', 'name')
+                            ->required()
+                            ->preload(),
+
+                        Forms\Components\Select::make('materials')
+                            ->multiple()
+                            ->label('Materiales')
+                            ->relationship('materials', 'name')
+                            ->preload(),
+
+                        Forms\Components\Select::make('sizes')
+                            ->multiple()
+                            ->label('Tamaños')
+                            ->relationship('sizes', 'name'),
+                    ]),
+            ])->columnSpanFull()
+        ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('price')
-                    ->money()
+                    ->label('Precio')
+                    ->money('MXN')
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('quantity')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Cantidad')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Usuario'),
+
                 Tables\Columns\TextColumn::make('brand.name')
-                    ->numeric()
-                    ->sortable(),
+                    ->label('Marca'),
+
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Categorías')
+                    ->limit(3),
+
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha de creación')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Fecha de actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -91,7 +148,11 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ColorsRelationManager::class,
+            CategoriesRelationManager::class,
+            GendersRelationManager::class,
+            ColorsRelationManager::class,
+            SizesRelationManager::class,
         ];
     }
 

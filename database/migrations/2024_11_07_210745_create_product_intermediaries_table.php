@@ -51,7 +51,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('size_product', function (Blueprint $table) {
+        Schema::create('product_size', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Size::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();

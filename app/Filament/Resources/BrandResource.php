@@ -26,11 +26,13 @@ class BrandResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nombre de la marca')
-                    ->placeholder('Ingrese el nombre de la marca')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make()->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Nombre de la marca')
+                        ->placeholder('Ingrese el nombre de la marca')
+                        ->required()
+                        ->maxLength(255),
+                ])
             ]);
     }
 
@@ -61,8 +63,8 @@ class BrandResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->label('Editar'),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
