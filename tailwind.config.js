@@ -1,5 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-import preset from './vendor/filament/support/tailwind.config.preset'
+import preset from './vendor/filament/support/tailwind.config.preset';
 /** @type {import('tailwindcss').Config} */
 export default {
     presets: [preset],
@@ -18,6 +18,10 @@ export default {
             fontFamily: {
                 "patrick-hand": ['Patrick Hand', 'sans-serif'],
             },
+            colors: {
+                lila: '#a079b6', // Agregando color personalizado
+                lilac: '#b5a5c0'
+            },
         },
     },
     plugins: [require('daisyui')],
@@ -25,18 +29,17 @@ export default {
         themes: [
             {
                 babyshop: {
-                    "primary": "#f1cad0", // Un rosa pastel más suave
-                    "secondary": "#B0E0E6", // Un azul pastel más claro
-                    "accent": "#FFFACD", // Un amarillo pastel más suave
-                    "neutral": "#FAFAFA", // Un gris muy claro para un fondo más suave
-                    "base-100": "#FFFFFF", // Blanco puro para mantener la claridad y simplicidad
-                    "info": "#B0E0E6", // Azul pastel para un tono amigable e informativo
-                    "success": "#C1E1C1", // Un verde pastel más suave
-                    "warning": "#FFE4B5", // Un tono durazno pastel más suave
-                    "error": "#FFB6B6", // Un rojo pastel más suave
+                    "primary": "#f1cad0",
+                    "secondary": "#B0E0E6",
+                    "accent": "#e9deef",
+                    "neutral": "#FAFAFA",
+                    "base-100": "#FFFFFF",
+                    "info": "#B0E0E6",
+                    "success": "#C1E1C1",
+                    "warning": "#FFE4B5",
+                    "error": "#FFB6B6",
                 },
             },
         ],
-
     }
 };

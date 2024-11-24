@@ -1,5 +1,5 @@
 <x-html>
-    <div class="hero bg-base-200 min-h-screen">
+    <div class="hero bg-cyan-50 min-h-screen">
         <div class="w-10/12 mx-auto">
             <div class="hero-content flex flex-col lg:flex-row lg:space-x-20 space-y-0 lg:space-y-0">
                 <div class="text-left">

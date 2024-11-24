@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="hero bg-base-200 min-h-[80vh]">
+    <div class="hero bg-red-50 min-h-[80vh]">
         <div class="hero-content flex-col my-20">
             <div class="flex flex-col  w-6/12 items-center">
                 <h1 class="text-5xl font-bold font-patrick-hand">Es hora de hacer un cambio</h1>

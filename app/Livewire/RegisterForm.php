@@ -9,6 +9,7 @@ use App\Models\Municipality;
 use App\Models\Neighborhood;
 use App\Models\State;
 use App\Models\User;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
@@ -162,7 +163,9 @@ class RegisterForm extends Component implements HasForms
 
                     ]),
             ])->submitAction(new HtmlString("<button class='btn btn-secondary'>Enviar</button>"))
-                ->cancelAction(new HtmlString("<button class='btn btn-primary'>Cancelar</button>"))
+                ->cancelAction(new HtmlString("<button type='button' wire:click='cancel' class='btn btn-primary'>Cancelar</button>"))
+            ->nextAction(fn (Action $action) => $action->label('Siguiente')->color('secondary'))
+            ->previousAction(fn (Action $action) => $action->label('Regresar')->color('primary')),
         ]);
     }
 
@@ -262,4 +265,9 @@ class RegisterForm extends Component implements HasForms
 
         return array_filter($neighborhoods, fn($name) => preg_match($pattern, $name));
     }
+
+    public function cancel() {
+        return redirect()->route('welcome.index'); // O `redirect('/')` para ir a la raíz
+    }
+
 }

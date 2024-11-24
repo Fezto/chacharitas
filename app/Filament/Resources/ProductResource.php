@@ -119,7 +119,8 @@ class ProductResource extends Resource
 
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('Categorías')
-                    ->limit(3),
+                    ->limit(3)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha de creación')

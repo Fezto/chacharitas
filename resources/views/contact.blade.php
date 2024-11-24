@@ -23,9 +23,9 @@
         <livewire:contakt-form></livewire:contakt-form>
 
         <!-- Parte inferior con hero tradicional -->
-        <section class="h-[350px] bg-primary bg-opacity-20 flex items-center justify-center"></section>
+        <section class="h-[350px] bg-amber-100 bg-opacity-20 flex items-center justify-center"></section>
     </div>
-    <div class="bg-primary bg-opacity-20 flex flex-row justify-around pb-10 text-center">
+    <div class="bg-amber-100 bg-opacity-20 flex flex-row justify-around pb-10 text-center">
         <div class="flex flex-col items-center mb-5 w-3/12">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor" class="h-20">

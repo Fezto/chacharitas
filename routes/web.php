@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\NeighborhoodController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -12,9 +13,9 @@ Route::get('/', function () {
 })->name('welcome.index');
 
 Route::view('/about', 'about')->name('about.index');
-Route::get('/shop', function() {
-   return view('shop');
-})->name('shop.index');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::post('/products/filter', [ShopController::class, 'filter'])->name('shop.filter');
+
 
 Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)->name('verification.verify');
 

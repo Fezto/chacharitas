@@ -12,6 +12,14 @@
     @apply text-xs;
 }
 
+.fi-btn{
+    @apply text-black !important;
+}
+
+.fi-btn-icon{
+    @apply text-black !important;
+}
+
 .fi-fo-field-wrp-helper-text{
     @apply text-xs;
 }

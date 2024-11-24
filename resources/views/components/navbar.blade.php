@@ -1,19 +1,21 @@
-<div class="navbar bg-base-100 shadow-lg bg-primary justify-between">
+<div class="navbar shadow-lg bg-lila justify-between">
     <div>
         <a class="btn btn-ghost text-4xl font-patrick-hand hover:bg-secondary transition duration-300 flex items-center">
-            <img src="{{ asset('svg/carriage.svg') }}" class="h-12" alt="logo"> Chacharitas
+            <img src="{{ asset('img/logo.png') }}" class="h-12" alt="logo"> <h1 class="text-white">
+                Chacharitas
+            </h1>
         </a>
     </div>
     <div class="justify-center hidden lg:block">
         <ul class="menu menu-horizontal space-x-10 justify-center">
-            <li><a href="{{ route('welcome.index') }}" class="hover:bg-accent btn btn-ghost transition duration-300">Inicio</a>
+            <li><a href="{{ route('welcome.index') }}" class="hover:bg-accent btn btn-ghost transition duration-300 text-white">Inicio</a>
             </li>
-            <li><a href="{{ route('shop.index') }}" class="hover:bg-secondary btn btn-ghost transition duration-300">Productos</a></li>
+            <li><a href="{{ route('shop.index') }}" class="hover:bg-secondary btn btn-ghost transition duration-300 text-white">Productos</a></li>
             <li>
-                <a href="{{ route('about.index') }}" class="hover:bg-error btn btn-ghost transition duration-300">Sobre
+                <a href="{{ route('about.index') }}" class="hover:bg-error btn btn-ghost transition duration-300 text-white">Sobre
                     nosotros</a>
             </li>
-            <li><a href="{{route('contact.index')}}" class="hover:bg-success btn btn-ghost transition duration-300">Contáctanos</a></li>
+            <li><a href="{{route('contact.index')}}" class="hover:bg-success btn btn-ghost transition duration-300 text-white">Contáctanos</a></li>
         </ul>
     </div>
     <div class="flex items-center space-x-4">
@@ -73,7 +75,7 @@
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                     <!-- Mostrar nombre del usuario si está autenticado -->
                     @auth
-                        <li><a class="font-semibold">{{ auth()->user()->name }}</a></li>
+                        <li><p class="font-semibold pointer-events-none">{{ auth()->user()->name }}</p></li>
                         <li><a href="#">Ver perfil</a></li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST">

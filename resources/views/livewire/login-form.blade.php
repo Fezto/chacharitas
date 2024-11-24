@@ -1,5 +1,4 @@
-
-<div class="bg-white w-full max-w-xl shrink-0 shadow-2xl">
+<div class="w-full max-w-xl shrink-0 shadow-2xl">
     @if(session('error'))
         <x-alert type="alert-error" class="rounded-none">
             {{ session('error') }}

@@ -2,13 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Http\Requests\RegisterUserRequest;
-use App\Models\Address;
-use App\Models\Municipality;
-use App\Models\Neighborhood;
-use App\Models\State;
-use App\Models\User;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -16,6 +9,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -56,7 +50,8 @@ class LoginForm extends Component implements HasForms
                         ->required(),
                 ]),
             ])->submitAction(new HtmlString("<button class='btn btn-secondary'>Enviar</button>"))
-                ->cancelAction(new HtmlString("<button class='btn btn-primary'>Cancelar</button>")),
+                ->cancelAction(new HtmlString("<button type='button' wire:click='cancel' class='btn btn-primary'>Cancelar</button>")),
+
         ]);
     }
 
@@ -88,5 +83,9 @@ class LoginForm extends Component implements HasForms
     public function render(): View
     {
         return view('livewire.login-form');
+    }
+
+    public function cancel() {
+        return redirect()->route('welcome.index'); // O `redirect('/')` para ir a la raíz
     }
 }

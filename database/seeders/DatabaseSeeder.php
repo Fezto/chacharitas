@@ -27,12 +27,13 @@ class DatabaseSeeder extends Seeder
             AddressSeeder::class,
             GenderSeeder::class,
             UserSeeder::class,
-            CaregorySeeder::class,
+            // CaregorySeeder::class,
             ColorSeeder::class,
             MaterialSeeder::class,
             SizeSeeder::class,
             BrandSeeder::class,
-            RoleSeeder::class
+            RoleSeeder::class,
+            ProductSeeder::class
         ]);
     }
 }
