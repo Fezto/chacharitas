@@ -29,7 +29,7 @@
                 <!-- Filtrar por Precio -->
                 <div class="mb-4">
                     <h3 class="font-semibold text-lg">Precio</h3>
-                    <input type="range" min="0" max="1000" value="0" class="range range-primary" step="100"/>
+                    <input type="range" min="0" max="1000" value="1000" class="range range-primary" step="100"/>
                     <div class="flex w-full justify-between px-2 text-xs">
                         <span>0</span>
                         <span></span>
@@ -64,12 +64,11 @@
                 @foreach($products as $product)
                     <div class="card bg-base-100 shadow-md">
                         <figure>
-                            <img src="{{asset("img/products/FotoProducto$product->id.jpeg")}}"
-                                 alt="Producto {{ $product->id }}" class="w-full h-48 object-contain">
+                            <img src='{{asset("img/products/{$product->image}")}}' alt="Producto {{ $product->id }}" class="w-full h-48 object-contain">
                         </figure>
                         <div class="card-body">
                             <h2 class="card-title">{{$product->name}}</h2>
-                            <p class="text-gray-600">Descripción del producto {{ $product->id }}</p>
+                            <p class="text-gray-600">{{ $product->description }}</p>
                             <p class="font-bold text-lg text-primary">$ {{ $product->price }}</p>
                             <button class="btn btn-secondary mt-4">Agregar al carrito</button>
                         </div>

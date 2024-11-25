@@ -46,7 +46,7 @@
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Ropa</h2>
                         <div class="card-actions">
-                            <button class="btn btn-primary">Ver más</button>
+                            <a href="{{ route('shop.index', ['category' => 1]) }}" class="btn btn-primary">Ver más</a>
                         </div>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Calzado</h2>
                         <div class="card-actions">
-                            <button class="btn btn-primary">Ver más</button>
+                            <a href="{{ route('shop.index', ['category' => 4]) }}" class="btn btn-primary">Ver más</a>
                         </div>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                     <div class="card-body items-center text-center">
                         <h2 class="card-title mb-3 text-3xl font-patrick-hand">Juguetes</h2>
                         <div class="card-actions">
-                            <button class="btn btn-primary">Ver más</button>
+                            <a href="{{ route('shop.index', ['category' => 3]) }}" class="btn btn-primary">Ver más</a>
                         </div>
                     </div>
                 </div>

@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProductResource extends Resource
@@ -52,7 +53,29 @@ class ProductResource extends Resource
                         Forms\Components\Select::make('user_id')
                             ->label('Usuario')
                             ->relationship('user', 'name')
+                            ->required()
+                            ->suffixAction(Forms\Components\Actions\Action::make('Colocar usuario actual')
+                                ->label('Colocar usuario actual')
+                                ->icon('heroicon-o-user')
+                                ->action(function (Forms\Components\Actions\Action $action, $state, callable $set) {
+                                    $set('user_id', Auth::user()->id); // Establece el usuario actual
+                                })
+                            ),
+
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Imagen del producto')
+                            ->image()
+                            ->disk('product_images') // Tu disco personalizado
+                            ->maxSize(2048) // Tamaño máximo en KB
                             ->required(),
+
+                        Forms\Components\Textarea::make('description')
+                            ->label('Descripción del producto')
+                            ->autosize()
+                            ->maxLength(500)
+                            ->helperText('El máximo es de 500 carácteres')
+
+
                     ])->columns(1),
 
                 Wizard\Step::make('Detalles del producto')

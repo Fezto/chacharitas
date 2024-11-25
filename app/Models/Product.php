@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -48,6 +48,22 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 class Product extends Model
 {
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(function ($product) {
+            if (request()->hasFile('image')) {
+                $image = request()->file('image');
+                $filename = "FotoProducto{$product->id}.jpeg";
+
+                // Guarda la imagen con el nombre personalizado
+                $path = $image->storeAs('productos', $filename, 'public');
+                $product->image = $path;
+            }
+        });
+    }
+
     public function attributes() : BelongsToMany
     {
         return $this->belongsToMany(Attribute::class);

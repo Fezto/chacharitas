@@ -40,7 +40,11 @@ class ProductSeeder extends Seeder
                 'quantity' => $productData['quantity'] ?? 0,
                 'brand_id' => $brand->id,
                 'user_id' => $productData['user_id'] ?? 1,
+                'description' => $productData['description']
             ]);
+
+            $product->image = "FotoProducto{$product->id}.jpeg";
+            $product->save();
 
             // Relacionar categoría
             $category = Category::firstOrCreate(['name' => $productData['category']]);

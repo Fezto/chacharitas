@@ -9,10 +9,30 @@ use Illuminate\Http\Request;
 
 class ShopController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('shop', ['categories' => Category::all(), 'products' => Product::all(), 'genders' => Gender::all()]);
+        $query = Product::query();
+
+        // Filtrar por una única categoría si está presente en la URL
+        $selectedCategory = $request->query('category');
+        if (!empty($selectedCategory)) {
+            $query->whereHas('categories', function ($q) use ($selectedCategory) {
+                $q->where('categories.id', $selectedCategory);
+            });
+        }
+
+        // Recuperar productos
+        $products = $query->get();
+
+        return view('shop', [
+            'categories' => Category::all(),
+            'products' => $products,
+            'genders' => Gender::all(),
+            'selectedCategory' => $selectedCategory
+        ]);
     }
+
+
 
     public function filter(Request $request)
     {

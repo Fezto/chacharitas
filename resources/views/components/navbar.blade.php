@@ -1,6 +1,6 @@
 <div class="navbar shadow-lg bg-lila justify-between">
     <div>
-        <a class="btn btn-ghost text-4xl font-patrick-hand hover:bg-secondary transition duration-300 flex items-center">
+        <a class="btn btn-ghost text-4xl font-patrick-hand transition duration-300 flex items-center" href="{{route('welcome.index')}}">
             <img src="{{ asset('img/logo.png') }}" class="h-12" alt="logo"> <h1 class="text-white">
                 Chacharitas
             </h1>
