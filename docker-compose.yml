@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+    app:
+        build: .
+        container_name: laravel_app
+        ports:
+            - "8000:80"
+            - "5173:5173"
+        depends_on:
+            mysql:
+                condition: service_healthy
+        environment:
+            DB_CONNECTION: mysql
+            DB_HOST: mysql
+            DB_PORT: 3306
+            DB_DATABASE: chacharitas
+            DB_USERNAME: root
+            DB_PASSWORD: sightofthesunshine
+            DB_EXTERNAL_HOST: mysql
+            DB_EXTERNAL_PORT: 3306
+            DB_EXTERNAL_DATABASE: location
+            DB_EXTERNAL_USERNAME: root
+            DB_EXTERNAL_PASSWORD: sightofthesunshine
+            APACHE_SERVER_NAME: localhost
+        volumes:
+            - ./:/var/www/html
+            - /var/www/html/node_modules
+            - /var/www/html/vendor
+
+    mysql:
+        image: mysql:8.0
+        container_name: mysql_db
+        ports:
+            - "3307:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: sightofthesunshine
+            MYSQL_DATABASE: chacharitas
+        healthcheck:
+            test: mysqladmin ping -h localhost -u root --password=$$MYSQL_ROOT_PASSWORD
+            interval: 5s
+            timeout: 10s
+            retries: 5
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./mexico.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+    mysql_data:
