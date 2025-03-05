@@ -32,6 +32,21 @@ class ShopController extends Controller
         ]);
     }
 
+    public function show(Request $request)
+    {
+
+        $product = Product::find($request->id);
+        $municipality = $product->user->address->neighborhood->municipality;
+
+        return view('product', [
+            'product' => Product::find($product->id),
+            'map_center' => [
+                'lat' => $municipality->latitude,
+                'lng' => $municipality->longitude
+            ]
+
+        ]);
+    }
 
 
     public function filter(Request $request)

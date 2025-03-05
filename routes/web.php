@@ -14,6 +14,8 @@ Route::get('/', function () {
 
 Route::view('/about', 'about')->name('about.index');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/{id}', [ShopController::class, 'show'])->name('shop.show');
+
 Route::post('/products/filter', [ShopController::class, 'filter'])->name('shop.filter');
 
 
@@ -22,6 +24,8 @@ Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)->name('ver
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact.index');
+
+// * API * //
 
 Route::get('/states', [StateController::class, 'index'])->name('states.index');
 Route::get('/states/{state}/municipalities', [MunicipalityController::class, 'get_municipalities_by_state'])->name('states.municipalities.index');

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id(); // Usar integer en lugar de id() para un id sin auto-incremento
             $table->string('name', 50)->charset('utf8')->collation('utf8_unicode_ci')->default(''); // Nombre del municipio
             $table->foreignIdFor(State::class)->default(0);
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
 
             // Establecer charset y collation para la tabla
             $table->charset = 'utf8mb4';

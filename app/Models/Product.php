@@ -64,6 +64,11 @@ class Product extends Model
         });
     }
 
+    public function getApproximateLocationAttribute()
+    {
+        return $this->user->address->neighborhood->municipality;
+    }
+
     public function attributes() : BelongsToMany
     {
         return $this->belongsToMany(Attribute::class);
