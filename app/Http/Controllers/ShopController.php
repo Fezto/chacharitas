@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Gender;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
 
 class ShopController extends Controller
 {
@@ -25,29 +27,61 @@ class ShopController extends Controller
         $products = $query->get();
 
         return view('shop', [
-            'categories' => Category::all(),
-            'products' => $products,
-            'genders' => Gender::all(),
+            'categories'       => Category::all(),
+            'products'         => $products,
+            'genders'          => Gender::all(),
             'selectedCategory' => $selectedCategory
         ]);
     }
 
     public function show(Request $request)
     {
+        // Se carga el producto con sus relaciones para tener acceso a la dirección y demás datos.
+        $product = Product::with([
+            'user.address.neighborhood.municipality.state',
+            'categories',
+            'genders'
+        ])->findOrFail($request->id);
 
-        $product = Product::find($request->id);
-        $municipality = $product->user->address->neighborhood->municipality;
+        // Obtenemos el código postal desde la dirección del usuario
+        $postalCode = $product->user->address->neighborhood->postal_code ?? null;
+
+        // Si existe código postal, intentamos obtener coordenadas a través de la API;
+        // de lo contrario, usamos coordenadas predeterminadas.
+
+        $coordinates = $postalCode
+            ? $this->getCoordinatesByPostalCode($postalCode)
+            : $this->getDefaultCoordinates();
 
         return view('product', [
-            'product' => Product::find($product->id),
-            'map_center' => [
-                'lat' => $municipality->latitude,
-                'lng' => $municipality->longitude
-            ]
-
+            'product'     => $product,
+            'map_center'  => $coordinates,
+            'postal_code' => $postalCode
         ]);
     }
 
+    private function getCoordinatesByPostalCode($postalCode)
+    {
+        return Cache::remember("postal_{$postalCode}", now()->addMonth(), function() use ($postalCode) {
+            $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
+                'address'    => "{$postalCode}, Mexico",
+                'components' => "country:MX|postal_code:{$postalCode}",
+                'key'        => config('services.google.maps_key')
+            ]);
+
+            $data = $response->json();
+
+            return $data['status'] === 'OK'
+                ? $data['results'][0]['geometry']['location']
+                : $this->getDefaultCoordinates();
+        });
+    }
+
+    private function getDefaultCoordinates()
+    {
+        // Coordenadas de Querétaro (puedes cambiarlas según tus necesidades)
+        return ['lat' => 20.588793, 'lng' => -100.389887];
+    }
 
     public function filter(Request $request)
     {
@@ -62,7 +96,6 @@ class ShopController extends Controller
 
         // Filtro por género
         if ($request->has('genders') && !empty($request->genders)) {
-            // Filtramos por los géneros seleccionados
             $query->whereHas('genders', function ($q) use ($request) {
                 $q->whereIn('genders.id', $request->genders);
             });
@@ -91,7 +124,6 @@ class ShopController extends Controller
             }
         }
 
-        // Obtener productos filtrados
         $products = $query->get();
 
         return response()->json([
@@ -99,5 +131,26 @@ class ShopController extends Controller
         ]);
     }
 
+    // Si en algún otro contexto necesitas una función genérica de geocodificación, puedes usar esta:
+    private function getCoordinates($location)
+    {
+        $cacheKey = 'geo_' . md5($location);
 
+        return Cache::remember($cacheKey, now()->addDay(), function() use ($location) {
+            $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
+                'address' => $location,
+                'key'     => config('services.google.maps_key'),
+                'region'  => 'mx'
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if ($data['status'] === 'OK') {
+                    return $data['results'][0]['geometry']['location'];
+                }
+            }
+
+            return $this->getDefaultCoordinates();
+        });
+    }
 }

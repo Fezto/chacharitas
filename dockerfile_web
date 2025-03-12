@@ -1,9 +1,9 @@
-# Usa una imagen base con PHP y Apache
-FROM php:8.4-apache
+# Usa una imagen base con PHP-FPM
+FROM php:8.4-fpm
 
-# Instala Node.js desde NodeSource
+# Instala Node.js y Nginx
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
-    apt-get install -y nodejs
+    apt-get install -y nodejs nginx
 
 # Instala dependencias del sistema
 RUN apt-get update && apt-get install -y \
@@ -16,10 +16,6 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install pdo pdo_mysql gd bcmath intl zip
 
-# Habilita módulos de Apache y configura ServerName
-RUN a2enmod rewrite headers && \
-    echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
 # Configuración de Xdebug
 RUN pecl install xdebug && \
     docker-php-ext-enable xdebug && \
@@ -29,9 +25,9 @@ RUN pecl install xdebug && \
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Configuración de Apache para Laravel
-COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
-RUN a2ensite 000-default.conf
+# Configuración de Nginx
+COPY docker/nginx.conf /etc/nginx/sites-available/default
+RUN ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 # Directorio de trabajo
 WORKDIR /var/www/html
@@ -48,7 +44,7 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader && \
     composer update && \
     npm update
 
-# Puerto para Vite
+# Expone puertos
 EXPOSE 80 5173
 
 # Script de inicio

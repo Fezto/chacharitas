@@ -1,0 +1,9 @@
+FROM mysql:8.0
+
+COPY mexico.sql /docker-entrypoint-initdb.d/init.sql
+
+ENV MYSQL_ROOT_PASSWORD=sightofthesunshine
+ENV MYSQL_DATABASE=chacharitas
+
+# Permisos para conexiones remotas y creación de usuario
+RUN echo "[mysqld]\nbind-address = 0.0.0.0" >> /etc/mysql/my.cnf
