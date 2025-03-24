@@ -56,7 +56,7 @@ class ShopController extends Controller
         return view('product', [
             'product'     => $product,
             'map_center'  => $coordinates,
-            'postal_code' => $postalCode
+            'postal_code' => $postalCode,
         ]);
     }
 

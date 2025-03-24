@@ -43,16 +43,26 @@ class RegisterForm extends Component implements HasForms
 
     public function updatedDataStateId($value)
     {
+        if (empty($value)) return;
+
+        // Limpiar caché previa si es necesario
+        Cache::forget("municipalities_{$value}");
+
         $this->municipalities = $this->getCachedMunicipalities($value);
-        $this->data['municipality_id'] = null; // Cambiado a municipality_id
+        $this->data['municipality_id'] = null;
         $this->neighborhoods = [];
-        $this->data['neighborhood_id'] = null; // Cambiado a neighborhood_id
+        $this->data['neighborhood_id'] = null;
     }
 
     public function updatedDataMunicipalityId($value)
     {
+        if (empty($value)) return;
+
+        // Limpiar caché previa si es necesario
+        Cache::forget("neighborhoods_{$value}");
+
         $this->neighborhoods = $this->getCachedNeighborhoods($value);
-        $this->data['neighborhood_id'] = null; // Cambiado a neighborhood_id
+        $this->data['neighborhood_id'] = null;
     }
 
     public function form(Form $form): Form
@@ -199,71 +209,71 @@ class RegisterForm extends Component implements HasForms
 
     private function loadCachedData(): void
     {
-        Cache::rememberForever('states', function () {
+        // Cargar solo estados inicialmente
+        Cache::remember('states', 3600, function () {
             return State::orderBy('name')->pluck('name', 'id')->toArray();
         });
 
-        Cache::rememberForever('municipalities', function () {
-            return Municipality::orderBy('name')
-                ->select(['id', 'name', 'state_id']) // Optimizando la selección de columnas
-                ->get()
-                ->groupBy('state_id')
-                ->map(fn($group) => $group->pluck('name', 'id')->toArray())
-                ->toArray();
-        });
-
-        Cache::rememberForever('neighborhoods', function () {
-            return Neighborhood::orderBy('name')
-                ->select(['id', 'name', 'municipality_id'])
-                ->get()
-                ->groupBy('municipality_id')
-                ->map(fn($group) => $group->pluck('name', 'id')->toArray())
-                ->toArray();
-        });
+        // Eliminar caché de municipios y colonias (los cargaremos bajo demanda)
+        Cache::forget('municipalities');
+        Cache::forget('neighborhoods');
     }
 
     private function getCachedStates(): array
     {
-        return Cache::get('states', []);
+        return Cache::remember('states', 3600, function () {
+            return State::orderBy('name')->pluck('name', 'id')->toArray();
+        });
     }
 
     private function getCachedMunicipalities($stateId): array
     {
-        $municipalities = Cache::get('municipalities', []);
-        return $municipalities[$stateId] ?? [];
+        return Cache::remember("municipalities_{$stateId}", 3600, function () use ($stateId) {
+            return Municipality::where('state_id', $stateId)
+                ->orderBy('name')
+                ->pluck('name', 'id')
+                ->toArray();
+        });
     }
 
     private function getCachedNeighborhoods($municipalityId): array
     {
-        $neighborhoods = Cache::get('neighborhoods', []);
-        return $neighborhoods[$municipalityId] ?? [];
+        return Cache::remember("neighborhoods_{$municipalityId}", 3600, function () use ($municipalityId) {
+            return Neighborhood::where('municipality_id', $municipalityId)
+                ->orderBy('name')
+                ->pluck('name', 'id')
+                ->toArray();
+        });
     }
 
     private function searchStates(string $search): array
     {
-        $states = $this->getCachedStates();
-        $search = preg_quote($search, '/');
-        $pattern = "/^{$search}/i";
-
-        return array_filter($states, fn($name) => preg_match($pattern, $name));
+        return State::where('name', 'like', "{$search}%")
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     private function searchMunicipalities(string $search): array
     {
-        $municipalities = $this->municipalities;
-        $search = preg_quote($search, '/');
-        $pattern = "/^{$search}/i";
+        $stateId = $this->data['state_id'] ?? null;
 
-        return array_filter($municipalities, fn($name) => preg_match($pattern, $name));
+        return Municipality::when($stateId, fn($query) => $query->where('state_id', $stateId))
+            ->where('name', 'like', "{$search}%")
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     private function searchNeighborhoods(string $search): array
     {
-        $neighborhoods = $this->neighborhoods;
-        $search = preg_quote($search, '/');
-        $pattern = "/^{$search}/i";
+        $municipalityId = $this->data['municipality_id'] ?? null;
 
-        return array_filter($neighborhoods, fn($name) => preg_match($pattern, $name));
+        return Neighborhood::when($municipalityId, fn($query) => $query->where('municipality_id', $municipalityId))
+            ->where('name', 'like', "{$search}%")
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
     public function cancel() {
