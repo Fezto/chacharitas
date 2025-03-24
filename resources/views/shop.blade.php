@@ -60,12 +60,12 @@
                 <option value="2">Menor precio</option>
                 <option value="3">Mayor precio</option>
             </select>
+
             <div id="products-container" class="grid grid-cols-2 gap-6 mt-6">
                 @foreach($products as $product)
                     <div class="card bg-base-100 shadow-md">
                         <figure>
-                            <img src='{{asset("img/products/{$product->image}")}}' alt="Producto {{ $product->id }}" class="w-full h-48 object-contain">
-                        </figure>
+                            <img src='{{ asset("img/products/" . optional($product->images->first())->url) }}' alt="Producto {{ $product->id }}" class="w-full h-48 object-contain">                        </figure>
                         <div class="card-body">
                             <h2 class="card-title">{{$product->name}}</h2>
                             <p class="text-gray-600">{{ $product->description }}</p>

@@ -12,6 +12,7 @@ use App\Models\Color;
 use App\Models\Gender;
 use App\Models\Material;
 use App\Models\Size;
+use App\Models\Image; // Importamos el modelo de Image
 
 class ProductSeeder extends Seeder
 {
@@ -43,8 +44,11 @@ class ProductSeeder extends Seeder
                 'description' => $productData['description']
             ]);
 
-            $product->image = "FotoProducto{$product->id}.jpeg";
-            $product->save();
+            // Crear una entrada en la tabla Images
+            Image::create([
+                'product_id' => $product->id,
+                'url' => "FotoProducto{$product->id}.jpeg"
+            ]);
 
             // Relacionar categoría
             $category = Category::firstOrCreate(['name' => $productData['category']]);

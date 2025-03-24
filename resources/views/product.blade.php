@@ -11,10 +11,22 @@
         <!-- Contenedor principal del producto -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <!-- Sección de la imagen -->
-            <figure class="bg-base-200 p-6 rounded-box">
-                <img src='{{ asset("img/products/{$product->image}") }}'
-                     alt="{{ $product->name }}"
-                     class="w-full h-96 object-contain">
+            <figure class="bg-base-200 p-6 rounded-lg relative overflow-hidden shadow-lg border border-gray-200">
+                <!-- Carrusel -->
+                <div class="carousel w-full relative group">
+                    @foreach($product->images as $index => $image)
+                        <div id="item{{ $index + 1 }}" class="carousel-item w-full flex justify-center">
+                            <img src="{{ asset('img/products/' . $image->url) }}" alt="{{ $product->name }}"
+                                 class="h-96 object-contain zoomable">
+                        </div>
+                    @endforeach
+                </div>
+                <!-- Navegación del carrusel (opcional) -->
+                <div class="flex justify-center w-full py-2 gap-2">
+                    @foreach($product->images as $index => $image)
+                        <a href="#item{{ $index + 1 }}" class="btn btn-xs">{{ $index + 1 }}</a>
+                    @endforeach
+                </div>
             </figure>
 
             <!-- Detalles del producto -->
@@ -35,16 +47,13 @@
                         <label class="label">
                             <span class="label-text">Cantidad</span>
                         </label>
-                        <input type="number"
-                               name="quantity"
-                               value="1"
-                               min="1"
-                               class="input input-bordered w-32">
+                        <input type="number" name="quantity" value="1" min="1" class="input input-bordered w-32">
                     </div>
                     <button type="submit" class="btn btn-primary w-full lg:w-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                         </svg>
                         Agregar al carrito
                     </button>
@@ -54,16 +63,18 @@
                 <div class="divider"></div>
                 <div class="space-y-2">
                     <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-info" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>Envíos a todo el país</span>
                     </div>
                     <div class="flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-info" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>Garantía de 30 días</span>
                     </div>
@@ -80,9 +91,13 @@
         </div>
     </div>
 
+    <!-- Magnifier (Fuera del contenedor principal para evitar overflow-hidden) -->
+    <div id="magnifier" class="hidden fixed rounded shadow-md"
+         style="width: 600px; height: 600px; overflow: hidden; background-repeat: no-repeat; z-index: 1000; border: 1px solid rgba(0,0,0,0.1);"></div>
+
     <!-- Inicialización de Google Maps -->
     <script>
-        window.initMap = function() {
+        window.initMap = function () {
             // Obtener las coordenadas del centro del mapa
             const centerData = {!! json_encode($map_center) !!};
             const lat = parseFloat(centerData.lat);
@@ -115,6 +130,77 @@
                 radius: 2000
             });
         };
+    </script>
+
+    <!-- Script para el efecto de zoom avanzado sin overlay -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const magnifier = document.getElementById('magnifier');
+            const zoomableImages = document.querySelectorAll('.zoomable');
+
+            let currentImg = zoomableImages[0];
+
+            function updateMagnifierPosition(e, img) {
+                const rect = img.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xPercent = (x / img.width) * 100;
+                const yPercent = (y / img.height) * 100;
+
+                // Posicionar la lupa a la derecha de la imagen
+                magnifier.style.left = `${rect.right + 20}px`;
+                const verticalOffset = Math.min(
+                    window.innerHeight - magnifier.offsetHeight - 20,
+                    Math.max(20, e.clientY - magnifier.offsetHeight / 2)
+                );
+                magnifier.style.top = `${verticalOffset}px`;
+
+                // Ajustar tamaño y posición del background en la lupa
+                magnifier.style.backgroundSize = `${img.naturalWidth * 4}px ${img.naturalHeight * 4}px`;
+                magnifier.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+            }
+
+            zoomableImages.forEach(function (img) {
+                img.addEventListener('mouseenter', function (e) {
+                    magnifier.classList.remove('hidden');
+                    magnifier.style.backgroundImage = `url(${img.src})`;
+                    currentImg = img;
+                });
+
+                img.addEventListener('mousemove', function (e) {
+                    updateMagnifierPosition(e, img);
+                });
+
+                img.addEventListener('mouseleave', function () {
+                    magnifier.classList.add('hidden');
+                });
+            });
+
+            // Actualizar la imagen de fondo al cambiar de imagen en el carrusel
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            carouselItems.forEach(item => {
+                item.addEventListener('transitionend', () => {
+                    const visibleImg = item.querySelector('.zoomable');
+                    if (visibleImg) {
+                        currentImg = visibleImg;
+                        magnifier.style.backgroundImage = `url(${currentImg.src})`;
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Script para prevenir el scroll al hacer clic en los enlaces del carrusel -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carouselLinks = document.querySelectorAll('.carousel a');
+            carouselLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Si usas un plugin o lógica adicional para el carrusel, puedes llamarla aquí.
+                });
+            });
+        });
     </script>
 
     <!-- Cargar la API de Google Maps de forma asíncrona -->
