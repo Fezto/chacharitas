@@ -13,17 +13,18 @@
             </a>
         </div>
 
-        <div class="flex flex-col md:flex-row justify-end space-x-10 w-full">
+        <div class="flex flex-col md:flex-row  w-full">
             <!-- Panel lateral con información y consejos -->
-            <aside class="md:w-1/3">
+            <aside class="w-5/12">
                 <div class="card bg-base-200 shadow-md p-6">
                     <h2 class="text-2xl font-semibold mb-4">Consejos para un buen producto</h2>
                     <ul class="list-disc list-inside text-gray-700 space-y-2">
                         <li>Completa todos los campos obligatorios.</li>
                         <li>Sube imágenes de alta calidad y desde distintos ángulos.</li>
                         <li>Describe claramente las características del producto.</li>
-                        <li>Selecciona categorías y marcas correctas para una mejor visibilidad.</li>
                         <li>Verifica que la información de precios y stock sea precisa.</li>
+                        <li>Selecciona categorías y marcas correctas para una mejor visibilidad.</li>
+
                     </ul>
 
                     <!-- Sección adicional para rellenar el área vacía -->
@@ -52,7 +53,7 @@
             </aside>
 
             <!-- Formulario en un card moderno -->
-            <div class="md:w-2/3 flex items-center justify-center min-h-full">
+            <div class="w-7/12 flex items-center justify-center">
                 <livewire:product-form/>
             </div>
         </div>

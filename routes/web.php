@@ -27,7 +27,7 @@ Route::get('/contact', function () {
 
 Route::get('/add-product', function () {
     return view('add-product');
-})->name('add-product.index');
+})/* ->middleware('auth') */ ->name('add-product.index');
 
 // * API * //
 

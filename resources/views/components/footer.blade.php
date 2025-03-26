@@ -38,9 +38,10 @@
         <a href="{{ route('about.index') }}" class="link link-hover">Sobre nosotros</a>
         <a href="{{ route('shop.index') }}" class="link link-hover">Productos</a>
     </nav>
-    <form>
-        <h6 class="font-patrick-hand text-3xl">Newsletter</h6>
-        <fieldset class="form-control w-80">
+    <nav>
+        <form class="m-0">
+            <h6 class="font-patrick-hand text-3xl">Newsletter</h6>
+
             <label class="label">
                 <span class="label-text">¡Recibe las últimas notificaciones!</span>
             </label>
@@ -51,6 +52,6 @@
                     class="input input-bordered join-item"/>
                 <button class="btn btn-primary join-item">Suscribirse</button>
             </div>
-        </fieldset>
-    </form>
+        </form>
+    </nav>
 </footer>
