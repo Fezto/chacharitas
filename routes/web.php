@@ -25,6 +25,10 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact.index');
 
+Route::get('/add-product', function () {
+    return view('add-product');
+})->name('add-product.index');
+
 // * API * //
 
 Route::get('/states', [StateController::class, 'index'])->name('states.index');

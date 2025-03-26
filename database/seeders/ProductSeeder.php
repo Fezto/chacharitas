@@ -47,7 +47,7 @@ class ProductSeeder extends Seeder
             // Crear una entrada en la tabla Images
             Image::create([
                 'product_id' => $product->id,
-                'url' => "FotoProducto{$product->id}.jpeg"
+                'url' => "p_{$product->id}/FotoProducto{$product->id}.jpeg"
             ]);
 
             // Relacionar categoría

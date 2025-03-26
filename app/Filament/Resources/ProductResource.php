@@ -63,10 +63,12 @@ class ProductResource extends Resource
                             ),
 
                         Forms\Components\FileUpload::make('image')
-                            ->label('Imagen del producto')
+                            ->label('Imagen del productoooo')
                             ->image()
                             ->disk('product_images') // Tu disco personalizado
-                            ->maxSize(2048) // Tamaño máximo en KB
+                            ->maxSize(2048)
+                            ->multiple()// Tamaño máximo en KB
+                            ->maxFiles(5)
                             ->required(),
 
                         Forms\Components\Textarea::make('description')
