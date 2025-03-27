@@ -106,6 +106,7 @@ class ShopController extends Controller
             $query->whereBetween('price', [$request->min_price, $request->max_price]);
         }
 
+        // Ordenamiento
         if ($request->has('order_by') && !empty($request->order_by)) {
             $order_by_id = $request->order_by;
 
@@ -124,7 +125,18 @@ class ShopController extends Controller
             }
         }
 
-        $products = $query->get();
+        // Cargar la relación con las imágenes
+        $products = $query->with('images')->get()->map(function($product) {
+            return [
+                'id'          => $product->id,
+                'name'        => $product->name,
+                'price'       => $product->price,
+                'description' => $product->description,
+                // Se asume que las imágenes están en la carpeta "img/products"
+                // Y se usa optional() en caso de que el producto no tenga imagen asociada.
+                'image'       => asset("img/products/" . optional($product->images->first())->url)
+            ];
+        });
 
         return response()->json([
             'products' => $products

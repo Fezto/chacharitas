@@ -69,21 +69,22 @@ document.addEventListener('DOMContentLoaded', () => {
     function render_products(products) {
         const products_html =
             products.map(product => `
-                        <div class="card bg-base-100 shadow-md">
-                            <figure>
-                                <img src="/img/products/FotoProducto${product.id}.jpeg" alt="Producto ${product.id}" class="w-full h-48 object-contain">
-                            </figure>
-                            <div class="card-body">
-                                <h2 class="card-title">${product.name}</h2>
-                                <p class="text-gray-600">Descripción del producto ${product.id}</p>
-                                <p class="font-bold text-lg text-primary">$ ${product.price}</p>
-                                <button class="btn btn-secondary mt-4">Agregar al carrito</button>
-                            </div>
-                        </div>
-                    `).join('')
+            <div class="card bg-base-100 shadow-md">
+                <figure>
+                    <img src="${product.image}" alt="Producto ${product.id}" class="w-full h-48 object-contain">
+                </figure>
+                <div class="card-body">
+                    <h2 class="card-title">${product.name}</h2>
+                    <p class="text-gray-600">Descripción del producto ${product.id}</p>
+                    <p class="font-bold text-lg text-primary">$ ${product.price}</p>
+                    <button class="btn btn-secondary mt-4">Agregar al carrito</button>
+                </div>
+            </div>
+        `).join('');
 
         products_container.innerHTML = products_html;
     }
+
 
     // Event listener para el cambio en las categorías
     category_checkboxes.forEach(checkbox => checkbox.addEventListener('change', fetch_filtered_products));
