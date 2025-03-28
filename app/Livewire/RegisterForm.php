@@ -3,12 +3,8 @@
 namespace App\Livewire;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Http\Requests\RegisterUserRequest;
-use App\Models\Address;
-use App\Models\Municipality;
 use App\Models\Neighborhood;
 use App\Models\State;
-use App\Models\User;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -41,29 +37,6 @@ class RegisterForm extends Component implements HasForms
         $this->loadCachedData();
     }
 
-    public function updatedDataStateId($value)
-    {
-        if (empty($value)) return;
-
-        // Limpiar caché previa si es necesario
-        Cache::forget("municipalities_{$value}");
-
-        $this->municipalities = $this->getCachedMunicipalities($value);
-        $this->data['municipality_id'] = null;
-        $this->neighborhoods = [];
-        $this->data['neighborhood_id'] = null;
-    }
-
-    public function updatedDataMunicipalityId($value)
-    {
-        if (empty($value)) return;
-
-        // Limpiar caché previa si es necesario
-        Cache::forget("neighborhoods_{$value}");
-
-        $this->neighborhoods = $this->getCachedNeighborhoods($value);
-        $this->data['neighborhood_id'] = null;
-    }
 
     public function form(Form $form): Form
     {
@@ -115,50 +88,52 @@ class RegisterForm extends Component implements HasForms
                         ]),
                     ]),
                 Wizard\Step::make('Dirección')
-                    ->completedIcon('heroicon-m-hand-thumb-up')
-                    ->icon('heroicon-m-home')
-                    ->description('¿Donde te encuentras?')
                     ->schema([
-                        \Filament\Forms\Components\Grid::make(2)->schema([
-                            Select::make('data.state_id')
+                        \Filament\Forms\Components\Grid::make(3)->schema([
+                            TextInput::make('data.postal_code')
+                                ->label('Código postal')
+                                ->placeholder('Ej: 76902')
+                                ->regex('/^\d+$/')
+                                ->required()
+                                ->length(5)
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, $set) {
+                                    if (strlen($state) === 5) {
+                                        $this->searchByPostalCode($state, $set);
+                                    }
+                                }),
+
+                            TextInput::make('data.state_name')
                                 ->label('Estado')
-                                ->options($this->getCachedStates())
-                                ->searchable()
-                                ->placeholder('Seleccione su estado')
-                                ->getSearchResultsUsing(fn(string $search): array => $this->searchStates($search))
-                                ->required()
-                                ->reactive(),
+                                ->disabled()
+                                ->dehydrated(false)
+                                ->placeholder('Se autocompleta'),
 
-                            Select::make('data.municipality_id')
+                            TextInput::make('data.municipality_name')
                                 ->label('Municipio')
-                                ->options(fn() => $this->municipalities)
-                                ->searchable()
-                                ->placeholder('Seleccione su municipio')
-                                ->getSearchResultsUsing(fn(string $search): array => $this->searchMunicipalities($search))
-                                ->required()
-                                ->reactive(),
+                                ->disabled()
+                                ->dehydrated(false)
+                                ->placeholder('Se autocompleta'),
+                        ]),
 
+                        \Filament\Forms\Components\Grid::make(1)->schema([
                             Select::make('data.neighborhood_id')
                                 ->label('Colonia')
                                 ->options(fn() => $this->neighborhoods)
                                 ->searchable()
-                                ->placeholder('Seleccione su colonia')
-                                ->getSearchResultsUsing(fn(string $search): array => $this->searchNeighborhoods($search))
-                                ->required(),
+                                ->placeholder('Primero ingrese el código postal')
+                                ->required()
+                                ->disabled(fn() => empty($this->neighborhoods)),
+                        ]),
 
+                        \Filament\Forms\Components\Grid::make(1)->schema([
                             TextInput::make('data.street')
                                 ->label('Calle')
                                 ->placeholder('Ingrese su calle')
-                                ->required()
+                                ->required(),
                         ]),
-                        \Filament\Forms\Components\Grid::make(3)->schema([
-                            TextInput::make('data.postal_code')
-                                ->label('Código postal')
-                                ->placeholder('Ingrese su código postal')
-                                ->regex('/^\d+$/')
-                                ->required()
-                                ->length(5),
 
+                        \Filament\Forms\Components\Grid::make(2)->schema([
                             TextInput::make('data.street_number')
                                 ->label('Número exterior')
                                 ->placeholder('Ingrese su número exterior')
@@ -166,16 +141,15 @@ class RegisterForm extends Component implements HasForms
                                 ->required(),
 
                             TextInput::make('data.unit_number')
-                                ->label('Número exterior')
+                                ->label('Número interior')
                                 ->placeholder('Ingrese su número interior')
-                                ->regex('/^\d+$/')
+                                ->regex('/^\d+$/'),
                         ]),
-
                     ]),
             ])->submitAction(new HtmlString("<button class='btn btn-secondary'>Enviar</button>"))
                 ->cancelAction(new HtmlString("<button type='button' wire:click='cancel' class='btn btn-primary'>Cancelar</button>"))
-            ->nextAction(fn (Action $action) => $action->label('Siguiente')->color('secondary'))
-            ->previousAction(fn (Action $action) => $action->label('Regresar')->color('primary')),
+                ->nextAction(fn(Action $action) => $action->label('Siguiente')->color('secondary'))
+                ->previousAction(fn(Action $action) => $action->label('Regresar')->color('primary')),
         ]);
     }
 
@@ -219,65 +193,37 @@ class RegisterForm extends Component implements HasForms
         Cache::forget('neighborhoods');
     }
 
-    private function getCachedStates(): array
+    public function cancel()
     {
-        return Cache::remember('states', 3600, function () {
-            return State::orderBy('name')->pluck('name', 'id')->toArray();
-        });
-    }
-
-    private function getCachedMunicipalities($stateId): array
-    {
-        return Cache::remember("municipalities_{$stateId}", 3600, function () use ($stateId) {
-            return Municipality::where('state_id', $stateId)
-                ->orderBy('name')
-                ->pluck('name', 'id')
-                ->toArray();
-        });
-    }
-
-    private function getCachedNeighborhoods($municipalityId): array
-    {
-        return Cache::remember("neighborhoods_{$municipalityId}", 3600, function () use ($municipalityId) {
-            return Neighborhood::where('municipality_id', $municipalityId)
-                ->orderBy('name')
-                ->pluck('name', 'id')
-                ->toArray();
-        });
-    }
-
-    private function searchStates(string $search): array
-    {
-        return State::where('name', 'like', "{$search}%")
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
-    }
-
-    private function searchMunicipalities(string $search): array
-    {
-        $stateId = $this->data['state_id'] ?? null;
-
-        return Municipality::when($stateId, fn($query) => $query->where('state_id', $stateId))
-            ->where('name', 'like', "{$search}%")
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
-    }
-
-    private function searchNeighborhoods(string $search): array
-    {
-        $municipalityId = $this->data['municipality_id'] ?? null;
-
-        return Neighborhood::when($municipalityId, fn($query) => $query->where('municipality_id', $municipalityId))
-            ->where('name', 'like', "{$search}%")
-            ->orderBy('name')
-            ->pluck('name', 'id')
-            ->toArray();
-    }
-
-    public function cancel() {
         return redirect()->route('welcome.index'); // O `redirect('/')` para ir a la raíz
+    }
+
+    private function searchByPostalCode(string $postalCode, $set): void
+    {
+        $neighborhood = Neighborhood::where('postal_code', $postalCode)
+            ->with(['municipality.state'])
+            ->first();
+
+        if (!$neighborhood) {
+            $this->addError('data.postal_code', 'Código postal no encontrado');
+            $this->neighborhoods = [];
+            return;
+        }
+
+        // Obtener todas las colonias para el CP
+        $this->neighborhoods = Neighborhood::where('postal_code', $postalCode)
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+
+        // Actualizar los campos derivados
+        $set('data.state_id', $neighborhood->municipality->state_id);
+        $set('data.municipality_id', $neighborhood->municipality_id);
+        $set('data.state_name', $neighborhood->municipality->state->name);
+        $set('data.municipality_name', $neighborhood->municipality->name);
+
+        // Forzar actualización del componente
+        $this->form->fill($this->data);
     }
 
 }

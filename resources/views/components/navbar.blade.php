@@ -76,7 +76,7 @@
                     <!-- Mostrar nombre del usuario si está autenticado -->
                     @auth
                         <li><p class="font-semibold pointer-events-none">{{ auth()->user()->name }}</p></li>
-                        <li><a href="#">Ver perfil</a></li>
+                        <li><a href="{{ route('profile.index') }}">Ver perfil</a></li>
                         <li>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf

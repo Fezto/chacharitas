@@ -29,6 +29,32 @@ Route::get('/add-product', function () {
     return view('add-product');
 })/* ->middleware('auth') */ ->name('add-product.index');
 
+
+
+// Rutas de perfil dummy
+
+
+Route::get('/profile/edit', function () {
+    return view('profile'); // Crea esta vista según necesites
+})->name('profile.index');
+
+Route::get('/profile/password', function () {
+    return view('profile.password'); // Crea esta vista para cambiar contraseña
+})->name('profile.password');
+
+Route::get('/profile/settings', function () {
+    return view('profile.settings'); // Crea esta vista para configuración
+})->name('profile.settings');
+
+Route::put('/profile/update', function (\Illuminate\Http\Request $request) {
+    // Aquí procesarías la actualización del perfil.
+    // Por ahora solo redirigimos de vuelta a la edición con un mensaje dummy.
+    return redirect()->route('profile.index')->with('status', 'Perfil actualizado');
+})->name('profile.update');
+
+
+
+
 // * API * //
 
 Route::get('/states', [StateController::class, 'index'])->name('states.index');
