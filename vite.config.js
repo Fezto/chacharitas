@@ -15,7 +15,7 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: ['resources/css/app.css', 'resources/js/app.js', "resources/js/filter.js", "resources/js/maps.js", "resources/js/zoom.js"],
             refresh: [
                 ...refreshPaths,
                 'app/Livewire/**',
