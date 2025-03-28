@@ -67,23 +67,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function render_products(products) {
-        const products_html =
-            products.map(product => `
-            <div class="card bg-base-100 shadow-md">
-                <figure>
-                    <img src="${product.image}" alt="Producto ${product.id}" class="w-full h-48 object-contain">
-                </figure>
-                <div class="card-body">
-                    <h2 class="card-title">${product.name}</h2>
-                    <p class="text-gray-600">Descripción del producto ${product.id}</p>
-                    <p class="font-bold text-lg text-primary">$ ${product.price}</p>
-                    <button class="btn btn-secondary mt-4">Agregar al carrito</button>
-                </div>
+        const products_html = products.map(product => `
+        <div class="card bg-base-100 shadow-md">
+            <figure>
+                <img src="${product.image}" alt="Producto ${product.id}" class="w-full h-48 object-contain">
+            </figure>
+            <div class="card-body">
+                <h2 class="card-title">${product.name}</h2>
+                <p class="text-gray-600">${product.description}</p>
+                <p class="font-bold text-lg text-primary">$ ${product.price}</p>
+                <form action="/shop/${product.id}" method="GET">
+                    <button type="submit" class="btn btn-secondary mt-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                         stroke="currentColor" class="h-6 w-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+                                    </svg>
+                        Ver Producto
+                    </button>
+                </form>
             </div>
-        `).join('');
+        </div>
+    `).join('');
 
         products_container.innerHTML = products_html;
     }
+
 
 
     // Event listener para el cambio en las categorías
