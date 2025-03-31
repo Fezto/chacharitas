@@ -59,6 +59,7 @@ class ProductForm extends Component implements HasForms
                                 ->disk('product_images') // Usa el disco configurado
                                 ->directory('temp') // Carpeta temporal
                                 ->multiple()
+                                ->helperText('Máximo 5 imágenes')
                                 ->maxFiles(5)
                                 ->panelLayout('grid')
                                 ->required(),
@@ -80,12 +81,12 @@ class ProductForm extends Component implements HasForms
                                 ->relationship('brand', 'name')
                                 ->required(),
 
-                            \Filament\Forms\Components\Select::make('categories')
-                                ->multiple()
-                                ->label('Categorías')
-                                ->relationship('categories', 'name')
+                            \Filament\Forms\Components\Select::make('category_id') // Cambiamos 'categories' por 'category_id'
+                            ->label('Categoría')
+                                ->relationship('category', 'name') // Ajustamos la relación
                                 ->preload()
                                 ->required(),
+
 
                             \Filament\Forms\Components\Select::make('colors')
                                 ->multiple()

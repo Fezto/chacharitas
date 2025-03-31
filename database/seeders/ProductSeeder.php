@@ -33,6 +33,7 @@ class ProductSeeder extends Seeder
 
             // Buscar o crear la marca
             $brand = Brand::firstOrCreate(['name' => $productData['brand']]);
+            $category = Category::where('name', $productData['category'])->first();
 
             // Crear el producto
             $product = Product::create([
@@ -41,7 +42,8 @@ class ProductSeeder extends Seeder
                 'quantity' => $productData['quantity'] ?? 0,
                 'brand_id' => $brand->id,
                 'user_id' => $productData['user_id'] ?? 1,
-                'description' => $productData['description']
+                'description' => $productData['description'],
+                'category_id' => $category->id,
             ]);
 
             // Crear una entrada en la tabla Images
@@ -49,10 +51,6 @@ class ProductSeeder extends Seeder
                 'product_id' => $product->id,
                 'url' => "p_{$product->id}/FotoProducto{$product->id}.jpeg"
             ]);
-
-            // Relacionar categoría
-            $category = Category::firstOrCreate(['name' => $productData['category']]);
-            $product->categories()->sync([$category->id]);
 
             // Relacionar colores
             if (!empty($productData['colors'])) {

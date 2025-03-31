@@ -18,9 +18,8 @@ class ShopController extends Controller
         // Filtrar por una única categoría si está presente en la URL
         $selectedCategory = $request->query('category');
         if (!empty($selectedCategory)) {
-            $query->whereHas('categories', function ($q) use ($selectedCategory) {
-                $q->where('categories.id', $selectedCategory);
-            });
+            // Ahora se filtra directamente por el campo category_id
+            $query->where('category_id', $selectedCategory);
         }
 
         // Recuperar productos
@@ -39,7 +38,7 @@ class ShopController extends Controller
         // Se carga el producto con sus relaciones para tener acceso a la dirección y demás datos.
         $product = Product::with([
             'user.address.neighborhood.municipality.state',
-            'categories',
+            'category', // Actualizado: ahora es 'category' en lugar de 'categories'
             'genders'
         ])->findOrFail($request->id);
 
@@ -48,7 +47,6 @@ class ShopController extends Controller
 
         // Si existe código postal, intentamos obtener coordenadas a través de la API;
         // de lo contrario, usamos coordenadas predeterminadas.
-
         $coordinates = $postalCode
             ? $this->getCoordinatesByPostalCode($postalCode)
             : $this->getDefaultCoordinates();
@@ -87,11 +85,10 @@ class ShopController extends Controller
     {
         $query = Product::query();
 
-        // Filtro por categoría
+        // Filtro por categoría (ahora se filtra por category_id)
         if ($request->has('categories') && !empty($request->categories)) {
-            $query->whereHas('categories', function ($q) use ($request) {
-                $q->whereIn('categories.id', $request->categories);
-            });
+            // Suponiendo que desde el frontend se envía un arreglo de IDs, usamos whereIn
+            $query->whereIn('category_id', $request->categories);
         }
 
         // Filtro por género

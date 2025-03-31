@@ -49,6 +49,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Product extends Model
 {
+
+    /*
     protected static function boot(): void
     {
         parent::boot();
@@ -64,25 +66,20 @@ class Product extends Model
             }
         });
     }
+    */
 
     public function getApproximateLocationAttribute()
     {
         return $this->user->address->neighborhood->municipality;
     }
-
-    public function attributes() : BelongsToMany
-    {
-        return $this->belongsToMany(Attribute::class);
-    }
-
     public function brand() : BelongsTo
     {
         return $this->belongsTo(Brand::class);
     }
 
-    public function categories() : BelongsToMany
+    public function category() : BelongsTo
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsTo(Category::class);
     }
 
     public function colors() : BelongsToMany

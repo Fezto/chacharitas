@@ -6,7 +6,7 @@ use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CaregorySeeder extends Seeder
+class CategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -17,13 +17,8 @@ class CaregorySeeder extends Seeder
             ['name' => 'Ropa'],
             ['name' => 'Calzado'],
             ['name' => 'Accesorios'],
-            ['name' => 'Pañales y Cambiadores'],
-            ['name' => 'Juguetes y Entretenimiento'],
-            ['name' => 'Carriolas y Sillas de Paseo'],
-            ['name' => 'Mobiliario y Decoración'],
-            ['name' => 'Alimentación'],
-            ['name' => 'Baño y Cuidado Personal'],
-            ['name' => 'Portabebés y Mochilas'],
+            ['name' => 'Juguetes'],
+            ['name' => 'Cuidado Personal']
         ];
 
         foreach ($data as $item) {

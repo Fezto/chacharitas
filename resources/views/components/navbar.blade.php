@@ -70,7 +70,7 @@
             <div class="dropdown dropdown-bottom dropdown-end">
                 <!-- El botón del dropdown será la foto de perfil -->
                 <div tabindex="0" role="button" class="btn m-1 p-0">
-                    <img src="{{ auth()->user()->profile_picture ?? asset('img/default-avatar.png') }}" alt="Foto de perfil" class="w-11 h-10 rounded-full object-cover">
+                    <img src="{{ asset('img/profiles/' . auth()->user()->url) }}" alt="Foto de perfil" class="w-11 h-10 rounded-full object-cover">
                 </div>
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                     <!-- Mostrar nombre del usuario si está autenticado -->

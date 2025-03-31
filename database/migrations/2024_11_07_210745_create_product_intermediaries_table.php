@@ -27,14 +27,6 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('category_product', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Category::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
         Schema::create('color_product', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Color::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
@@ -58,14 +50,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::create('attribute_product', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(\App\Models\Attribute::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignIdFor(Product::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamps();
-            $table->softDeletes();
-        });
     }
 
     /**
@@ -73,11 +57,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attribute_product');
         Schema::dropIfExists('size_product');
         Schema::dropIfExists('material_product');
         Schema::dropIfExists('color_product');
-        Schema::dropIfExists('category_product');
         Schema::dropIfExists('gender_product');
     }
 };

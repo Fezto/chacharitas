@@ -111,4 +111,6 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
     {
         return Auth::user()->can('access panel');
     }
+
+
 }

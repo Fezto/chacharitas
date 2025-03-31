@@ -9,15 +9,15 @@
         </a>
 
         <!-- Contenedor principal del producto -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Sección de la imagen -->
-            <figure class="bg-base-200 p-6 rounded-lg relative overflow-hidden shadow-lg border border-gray-200">
+        <div class="grid grid-cols-1 lg:grid-cols-7 gap-8">
+            <!-- Sección de la imagen: ocupará 3/7 en pantallas grandes -->
+            <figure class="bg-base-200 p-6 rounded-lg relative overflow-hidden shadow-lg border border-gray-200 lg:col-span-3">
                 <!-- Carrusel -->
                 <div class="carousel w-full relative group">
                     @foreach($product->images as $index => $image)
                         <div id="item{{ $index + 1 }}" class="carousel-item w-full flex justify-center">
                             <img src="{{ asset('img/products/' . $image->url) }}" alt="{{ $product->name }}"
-                                 class="h-96 object-contain zoomable">
+                                 class="w-full object-contain zoomable">
                         </div>
                     @endforeach
                 </div>
@@ -30,9 +30,30 @@
             </figure>
 
             <!-- Detalles del producto -->
-            <div class="space-y-6">
+            <div class="space-y-6 lg:col-span-4">
                 <h1 class="text-4xl font-bold">{{ $product->name }}</h1>
                 <p class="text-3xl text-primary">${{ number_format($product->price, 2) }}</p>
+
+                <!-- Información del vendedor -->
+                <div class="flex items-center space-x-4 p-2 border border-gray-200 rounded-lg">
+                    <!-- Columna de la foto de perfil -->
+                    <div class="w-20 h-20">
+                        <img src="{{ asset($product->user->profile_photo ?? 'img/default_profile.png') }}"
+                             alt="{{ $product->user->name }}"
+                             class="w-20 h-20 rounded-full object-cover">
+                    </div>
+                    <!-- Columna de información (nombre y rating) -->
+                    <div class="flex flex-col">
+                        <span class="font-bold text-xl">{{ $product->user->name }}</span>
+                        <div class="flex items-center">
+                            <!-- Ícono de estrella -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.385 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.921-.755 1.688-1.54 1.118l-3.384-2.455a1 1 0 00-1.175 0l-3.384 2.455c-.784.57-1.838-.197-1.54-1.118l1.286-3.966a1 1 0 00-.364-1.118L2.049 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
+                            </svg>
+                            <span>{{ $product->user->rating ?? 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Descripción -->
                 <div class="prose max-w-none">
@@ -44,10 +65,12 @@
                 <form action="{{ route('shop.index', $product) }}" method="POST" class="space-y-4">
                     @csrf
                     <div class="form-control">
-                        <label class="label">
-                            <span class="label-text">Cantidad</span>
-                        </label>
-                        <input type="number" name="quantity" value="1" min="1" class="input input-bordered w-32">
+                        @if($product->quantity > 1)
+                            <label class="label">
+                                <span class="label-text">Cantidad</span>
+                            </label>
+                            <input type="number" name="quantity" value="1" min="1" class="input input-bordered w-32">
+                        @endif
                     </div>
                     <button type="submit" class="btn btn-primary w-full lg:w-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
@@ -58,6 +81,8 @@
                         Agregar al carrito
                     </button>
                 </form>
+
+
 
                 <!-- Información adicional -->
                 <div class="divider"></div>
@@ -81,6 +106,21 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Sección de comentarios -->
+    <div class="card border-gray-200 rounded-lg mx-9 mt-4">
+        <h3 class="text-xl font-semibold mb-2">Comentarios</h3>
+        <form action="{{ route('shop.index', $product->id) }}" method="POST">
+            @csrf
+            <div class="form-control">
+                <textarea name="comment" rows="3" placeholder="Escribe tu comentario..." class="textarea textarea-bordered"></textarea>
+            </div>
+            <button type="submit" class="btn btn-secondary mt-2">
+                Enviar comentario
+            </button>
+        </form>
+        <!-- Aquí podrías listar los comentarios si ya los tienes -->
     </div>
 
     <!-- Mapa -->
