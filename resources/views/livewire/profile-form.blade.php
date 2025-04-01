@@ -1,4 +1,4 @@
-<div class="bg-white shadow-lg rounded-lg max-w-md w-full">
+<div class="w-full bg-white shadow-lg rounded-lg">
     @if(session('success'))
         <x-alert type="alert-success" class="rounded-none">
             {{ session('success') }}

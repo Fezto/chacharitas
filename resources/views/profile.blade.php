@@ -1,5 +1,5 @@
 <x-base>
-    <div class="flex">
+    <div class="flex w-full">
         <!-- Sidebar de navegación del perfil -->
         <div id="profile-sidebar" class="w-64 bg-base-100 shadow-md p-6 hidden md:block">
             <h2 class="text-2xl font-bold mb-6">Mi Perfil</h2>

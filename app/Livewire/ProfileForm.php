@@ -1,10 +1,13 @@
 <?php
 
+
 namespace App\Livewire;
 
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -12,7 +15,6 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
 class ProfileForm extends Component implements HasForms
@@ -30,7 +32,7 @@ class ProfileForm extends Component implements HasForms
             'second_last_name',
             'email',
             'phone_number',
-            'photo',
+            'url',
         ]);
 
         // Prellenar el formulario con los datos actuales
@@ -39,70 +41,63 @@ class ProfileForm extends Component implements HasForms
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Section::make()
+        return $form->schema([
+            Section::make()
+                ->schema([
+                    Grid::make(2) // Crea 2 columnas
                     ->schema([
-                        TextInput::make('data.name')
-                            ->label('Nombre')
-                            ->required(),
+                        Group::make() // Primera columna: Datos
+                        ->schema([
+                            TextInput::make('data.name')
+                                ->label('Nombre')
+                                ->required(),
 
-                        TextInput::make('data.last_name')
-                            ->label('Apellido Paterno')
-                            ->required(),
+                            TextInput::make('data.last_name')
+                                ->label('Apellido Paterno')
+                                ->required(),
 
-                        TextInput::make('data.second_last_name')
-                            ->label('Apellido Materno')
-                            ->required(),
+                            TextInput::make('data.second_last_name')
+                                ->label('Apellido Materno')
+                                ->required(),
 
-                        TextInput::make('data.email')
-                            ->label('Correo electrónico')
-                            ->email()
-                            ->required(),
+                            TextInput::make('data.email')
+                                ->label('Correo electrónico')
+                                ->email()
+                                ->required(),
 
-                        TextInput::make('data.phone_number')
-                            ->label('Teléfono')
-                            ->tel()
-                            ->nullable(),
+                            TextInput::make('data.phone_number')
+                                ->label('Teléfono')
+                                ->tel()
+                                ->nullable(),
+                        ]),
 
-                        TextInput::make('data.password')
-                            ->label('Nueva contraseña')
-                            ->password()
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                            ->nullable(),
-
-                        TextInput::make('data.password_confirmation')
-                            ->label('Confirmar contraseña')
-                            ->password()
-                            ->dehydrated(false)
-                            ->same('data.password')
-                            ->nullable(),
-
-                        FileUpload::make('data.photo')
-                            ->label('Foto de perfil')
-                            ->image()
-                            ->directory('users')
-                            ->disk('public')
-                            ->maxSize(1024)
-                            ->imageCropAspectRatio('1:1')
-                            ->imageResizeTargetWidth(200)
-                            ->imageResizeTargetHeight(200)
-                            // Mostrar la imagen actual si existe
-                            ->default(fn () => Auth::user()->photo ? [Auth::user()->photo] : [])
-                            ->nullable(),
+                        Group::make() // Segunda columna: Foto de perfil
+                        ->schema([
+                            FileUpload::make('data.url')
+                                ->label('Foto de perfil')
+                                ->image()
+                                ->disk('profile_images')
+                                ->maxSize(1024)
+                                ->imageCropAspectRatio('1:1')
+                                ->imageEditor()
+                                ->imageEditorMode(1)
+                                ->circleCropper()
+                                ->imageResizeTargetWidth(200)
+                                ->imageResizeTargetHeight(200)
+                        ]),
 
                         Actions::make([
                             Action::make('Guardar')
                                 ->label('Guardar cambios')
                                 ->color('primary')
-                                ->action(function () {
-                                    $this->save();
-                                }),
-                        ])->fullWidth(),
+                                ->action(fn() => $this->save()),
+                        ])->fullWidth()->columnSpanFull(),
                     ])
-            ]);
+                ])->extraAttributes(['class' => 'max-w-none']),
+
+        ]);
     }
+
 
     public function save(): void
     {
@@ -111,9 +106,11 @@ class ProfileForm extends Component implements HasForms
 
         $user->update([
             'name' => $formData['name'],
+            'last_name' => $formData['last_name'],
+            'second_last_name' => $formData['second_last_name'],
             'email' => $formData['email'],
-            'password' => $formData['password'] ?? $user->password,
-            'photo' => $formData['photo'] ?? $user->photo
+            'phone_number' => $formData['phone_number'],
+            'url' => $formData['url'] ?? $user->url,
         ]);
 
         session()->flash('success', 'Perfil actualizado correctamente.');
@@ -124,3 +121,4 @@ class ProfileForm extends Component implements HasForms
         return view('livewire.profile-form');
     }
 }
+
