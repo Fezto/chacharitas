@@ -44,7 +44,7 @@
                     </div>
                     <!-- Columna de información (nombre y rating) -->
                     <div class="flex flex-col">
-                        <span class="font-bold text-xl">{{ $product->user->name }}</span>
+                        <span id="seller-name" class="font-bold text-xl"></span>
                         <div class="flex items-center">
                             <!-- Ícono de estrella -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -52,8 +52,23 @@
                             </svg>
                             <span>{{ $product->user->rating ?? 'N/A' }}</span>
                         </div>
+                        <span id="seller-phone" class="text-sm text-gray-500"></span>
                     </div>
                 </div>
+
+                <!-- Script API -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const sellerId = @json($product->user->id);
+                        fetch(`http://127.0.0.1:5000/users/${sellerId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('seller-name').textContent = data.name;
+                                document.getElementById('seller-phone').textContent = 'Teléfono: ' + data.phone_number;
+                            })
+                            .catch(error => console.error('Error al obtener la información del vendedor:', error));
+                    });
+                </script>
 
                 <!-- Descripción -->
                 <div class="prose max-w-none">
