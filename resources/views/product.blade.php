@@ -60,7 +60,7 @@
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
                         const sellerId = @json($product->user->id);
-                        fetch(`http://127.0.0.1:5000/users/${sellerId}`)
+                        fetch(`https://chapiritas.org/users/${sellerId}`)
                             .then(response => response.json())
                             .then(data => {
                                 document.getElementById('seller-name').textContent = data.name;
