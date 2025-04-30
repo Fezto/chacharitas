@@ -26,39 +26,39 @@ class ShippingController extends Controller
     /** 2) Cotiza envío usando direcciones de DB + formulario */
     public function quote(Request $request, Product $product)
     {
-        // --- 2.1) Address From: tomamos la dirección del vendedor de la BD
-        $userAddr = $product->user->address;
-        $hood = $userAddr->neighborhood;
-        $muni = $hood->municipality;
-        $state = $muni->state;
-        $country = $state->country; // en tu dump sólo tienes México
-
+        // 1. Dirección FROM (ubicación drop-off)
         $from = Shippo_Address::create([
-            'name' => $product->user->name,
-            'street1' => $userAddr->street . ' ' . $userAddr->street_number,
-            'city' => $muni->name,
-            'state' => $state->name,
-            'zip' => str_pad($hood->postal_code, 5, '0', STR_PAD_LEFT),
-            'country' => strtoupper($country->name) === 'MÉXICO' ? 'MX' : $country->code ?? 'MX',
-            'phone' => $product->user->phone_number,
-            'email' => $product->user->email,
+            'name' => 'Chacharitas Dropoff',
+            'street1' => 'Sucursal DHL México',
+            'city' => 'Ciudad de México',
+            'state' => 'CDMX',
+            'zip' => '01000',
+            'country' => 'MX',
+            'phone' => '5555555555',
+            'email' => 'dropoff@chacharitas.mx',
         ]);
 
-        // --- 2.2) Address To: tomamos del formulario y forzamos MX
+        // 2. Dirección TO: Cliente destino
         $to = Shippo_Address::create(array_merge(
             $request->input('to'),
             ['country' => 'MX']
         ));
 
-        // --- 2.3) Shipment: direcciones + paquete
+        // 3. Crear el envío con el carrier y el servicelevel_token adecuado (drop-off)
         $shipment = Shippo_Shipment::create([
             'address_from' => $from['object_id'],
             'address_to' => $to['object_id'],
             'parcels' => $request->input('parcels'),
+            'carrier_accounts' => [config('services.shippo.carrier_dhl_account_id')], // Usar el carrier_account_id de DHL
+            'servicelevel_token' => 'dhl_mexico_dropoff', // El token para drop-off de DHL
+            'extra' => [
+                'qr_code_requested' => true, // Solicitar código QR para el drop-off
+            ],
+            'metadata' => 'Producto ID ' . $product->id,
             'async' => false,
         ]);
 
-        // --- 2.4) Tarifas
+        // 4. Obtener las tarifas de envío
         $rates = $shipment['rates'];
 
         return view('shipping', [
@@ -70,6 +70,8 @@ class ShippingController extends Controller
         ]);
     }
 
+
+
     /** 3) Compra la etiqueta y redirige al PDF */
     public function purchase(Request $request, Product $product)
     {
@@ -78,6 +80,11 @@ class ShippingController extends Controller
             'label_file_type' => 'PDF',
             'async' => false,
         ]);
+
+        // Si tu carrier soporta QR, aquí puedes mostrar la URL
+        if (!empty($transaction['qr_code_url'])) {
+            return redirect()->away($transaction['qr_code_url']);
+        }
 
         return redirect()->away($transaction['label_url']);
     }

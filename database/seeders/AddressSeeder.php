@@ -13,6 +13,19 @@ class AddressSeeder extends Seeder
      */
     public function run(): void
     {
-        Address::factory(50)->create();
+
+        Address::create([
+            'street' => 'Lomas del mirador',
+            'street_number' => '111',
+            'neighborhood_id' => 220062870,
+        ]);
+
+        Address::create([
+            'street' => 'Lomas del mirador',
+            'street_number' => '111',
+            'neighborhood_id' => 220062870,
+        ]);
+
+
     }
 }

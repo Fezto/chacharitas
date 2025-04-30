@@ -19,8 +19,10 @@ return [
     ],
 
     'shippo' => [
-        'api_key' => env('SHIPPO_API_KEY'),
+        'api_key' => env('SHIPPO_API_KEY'), // Tu clave API de Shippo
+        'carrier_dhl_account_id' => env('SHIPPO_DHL_ACCOUNT_ID'), // El Object ID de DHL
     ],
+
 
     /*
 
