@@ -18,6 +18,23 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
+    'shippo' => [
+        'api_key' => env('SHIPPO_API_KEY'),
+    ],
+
+    /*
+
+    'skydropx' => [
+        'dev_base' => env('SKYDROPX_DEV_BASE'),
+        'dev_api_key' => env('SKYDROPX_DEV_API_KEY'),
+        'dev_api_secret' => env('SKYDROPX_DEV_API_SECRET'),
+        'prod_base' => env('SKYDROPX_PROD_BASE'),
+        'prod_api_key' => env('SKYDROPX_PROD_API_KEY'),
+        'prod_api_secret' => env('SKYDROPX_PROD_API_SECRET'),
+    ],
+
+    */
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),

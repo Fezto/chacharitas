@@ -2,17 +2,17 @@
 
 use App\Http\Controllers\MunicipalityController;
 use App\Http\Controllers\NeighborhoodController;
+use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome.index');
+Route::view('/', 'welcome')->name('welcome.index');
 
 Route::view('/about', 'about')->name('about.index');
+
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{id}', [ShopController::class, 'show'])->name('shop.show');
 
@@ -30,6 +30,12 @@ Route::get('/add-product', function () {
 })/* ->middleware('auth') */ ->name('add-product.index');
 
 
+Route::get('/shipping/{product}', [ShippingController::class, 'index'])
+    ->name('shipping.index');
+
+// Envía el POST de cotización
+Route::post('/shipping/{product}/quote', [ShippingController::class, 'quote'])
+    ->name('shipping.quote');
 
 // Rutas de perfil dummy
 
@@ -53,6 +59,12 @@ Route::put('/profile/update', function (\Illuminate\Http\Request $request) {
 })->name('profile.update');
 
 
+// * Envios * //
+
+Route::get('/test-shippo', [ShippingController::class, 'test']);
+Route::get('/shipping/{product}', [ShippingController::class, 'index'])->name('shipping.index');
+Route::post('/shipping/{product}/quote', [ShippingController::class, 'quote'])->name('shipping.quote');
+Route::post('/shipping/{product}/purchase', [ShippingController::class, 'purchase'])->name('shipping.purchase');
 
 
 // * API * //
