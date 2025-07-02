@@ -61,7 +61,7 @@ Route::put('/profile/update', function (\Illuminate\Http\Request $request) {
 
 // * Envios * //
 
-Route::get('/test-shippo', [ShippingController::class, 'test']);
+Route::get('/test-fedex', [ShippingController::class, 'test']);
 Route::get('/shipping/{product}', [ShippingController::class, 'index'])->name('shipping.index');
 Route::post('/shipping/{product}/quote', [ShippingController::class, 'quote'])->name('shipping.quote');
 Route::post('/shipping/{product}/purchase', [ShippingController::class, 'purchase'])->name('shipping.purchase');

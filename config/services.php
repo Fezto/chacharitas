@@ -18,9 +18,11 @@ return [
         'token' => env('POSTMARK_TOKEN'),
     ],
 
-    'shippo' => [
-        'api_key' => env('SHIPPO_API_KEY'), // Tu clave API de Shippo
-        'carrier_dhl_account_id' => env('SHIPPO_DHL_ACCOUNT_ID'), // El Object ID de DHL
+    'fedex' => [
+        'base_url' => env('FEDEX_BASE_URL'), // URL de la API de FedEx
+        'api_key' => env('FEDEX_KEY'), // Tu clave API de Shippo
+        'secret' => env('FEDEX_SECRET'), // El Object ID de DHL
+        'account_number' => env('FEDEX_ACCOUNT_NUMBER'), // Tu número de cuenta de FedEx
     ],
 
 
