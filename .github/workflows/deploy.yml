@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: 🚀 Deploy Chacharitas to Production
 
 on:
   push:
@@ -8,82 +8,123 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SSH_AUTH_SOCK: /tmp/ssh_agent.sock
 
     steps:
+      # 1) Checkout del código
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-
-      - name: Install Composer dependencies
-        run: composer install --optimize-autoloader --no-dev
-
-      - name: Install NPM dependencies
-        run: npm ci
-
-      - name: Build assets
-        run: npm run build
-
-      - name: Create deployment archive
+      # 2) Setup SSH agent con passphrase
+      - name: Setup SSH agent with passphrase
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
-          tar -czf deployment.tar.gz \
-            --exclude='.git' \
-            --exclude='node_modules' \
-            --exclude='.env' \
-            --exclude='storage/logs/*' \
-            --exclude='storage/framework/cache/*' \
-            --exclude='storage/framework/sessions/*' \
-            --exclude='storage/framework/views/*' \
-            .
+          # Inicia el agente en el socket definido
+          ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            # Variables
-            APP_DIR="/path/to/your/app"
-            BACKUP_DIR="/path/to/backups"
+          # Crea un pequeño helper que devuelva la passphrase
+          echo 'echo $SSH_PASSPHRASE' > ~/.ssh_askpass
+          chmod +x ~/.ssh_askpass
+
+          # Añade tu clave al agente usando SSH_ASKPASS
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' \
+            | DISPLAY=none SSH_ASKPASS=~/.ssh_askpass ssh-add - > /dev/null
+
+          # Comprueba que quedó cargada
+          ssh-add -l
+
+          # Guarda la huella de tu host para no preguntar luego
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      # 3) Conectar por SSH y desplegar
+      - name: SSH Deploy Laravel Application
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            set -e
+            
+            # Variables de configuración
+            APP_DIR="/var/www/chacharitas"
+            BACKUP_DIR="/var/backups/chacharitas"
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-
-            # Create backup
-            mkdir -p $BACKUP_DIR
+            
+            echo "🚀 Iniciando deployment de Chacharitas..."
+            
+            # Crear backup si existe la aplicación
             if [ -d "$APP_DIR" ]; then
-              cp -r $APP_DIR $BACKUP_DIR/backup_$TIMESTAMP
+              echo "📦 Creando backup..."
+              sudo mkdir -p $BACKUP_DIR
+              sudo cp -r $APP_DIR $BACKUP_DIR/backup_$TIMESTAMP
+              echo "✅ Backup creado en $BACKUP_DIR/backup_$TIMESTAMP"
             fi
-
-            # Create app directory if it doesn't exist
-            mkdir -p $APP_DIR
+            
+            # Navegar al directorio de la aplicación
             cd $APP_DIR
-
-            # Download and extract deployment
-            wget -O deployment.tar.gz ${{ github.server_url }}/${{ github.repository }}/releases/download/deployment-${{ github.sha }}/deployment.tar.gz
-            tar -xzf deployment.tar.gz
-            rm deployment.tar.gz
-
-            # Set permissions
-            chown -R www-data:www-data .
-            chmod -R 755 .
-            chmod -R 775 storage bootstrap/cache
-
-            # Run Laravel commands
+            
+            # Poner la aplicación en modo mantenimiento
+            echo "🔧 Activando modo mantenimiento..."
+            php artisan down --retry=60 || true
+            
+            # Actualizar código desde Git
+            echo "📥 Actualizando código desde repositorio..."
+            git fetch --all
+            git reset --hard origin/main
+            git clean -fd
+            
+            # Instalar dependencias de Composer
+            echo "📦 Instalando dependencias de PHP..."
+            composer install --optimize-autoloader --no-dev --no-interaction
+            
+            # Instalar dependencias de Node.js y compilar assets
+            if [ -f "package.json" ]; then
+              echo "📦 Instalando dependencias de Node.js..."
+              npm ci --production
+              
+              echo "🏗️ Compilando assets..."
+              npm run build
+            fi
+            
+            # Configurar permisos (el usuario deploy ya es propietario, solo ajustamos permisos específicos)
+            echo "🔐 Configurando permisos..."
+            chmod -R 755 $APP_DIR
+            chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
+            
+            # Asegurar que www-data tenga acceso a storage y cache
+            sudo chgrp -R www-data $APP_DIR/storage $APP_DIR/bootstrap/cache
+            
+            # Limpiar caché antes de los comandos
+            echo "🧹 Limpiando caché..."
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+            
+            # Ejecutar migraciones
+            echo "🗄️ Ejecutando migraciones..."
+            php artisan migrate --force
+            
+            # Crear caché optimizado
+            echo "⚡ Creando caché optimizado..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            php artisan migrate --force
-
-            # Restart services if needed
-            sudo systemctl reload nginx
+            
+            # Reiniciar servicios
+            echo "🔄 Reiniciando servicios..."
             sudo systemctl restart php8.2-fpm
+            sudo nginx -t && sudo systemctl reload nginx
+            
+            # Desactivar modo mantenimiento
+            echo "✅ Desactivando modo mantenimiento..."
+            php artisan up
+            
+            echo "🎉 Deployment completado exitosamente!"
+            echo "🌐 Chacharitas está disponible en https://chacharitas.org"
+          EOF
