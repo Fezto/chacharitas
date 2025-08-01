@@ -164,11 +164,19 @@ class RegisterForm extends Component implements HasForms
             $user = app(CreateNewUser::class)->create($this->data);
             event(new Registered($user));
             Auth::login($user);
-            session()->flash('status', 'Verification link sent!');
-            return redirect(route('verification.notice')); // O la ruta configurada
+            
+            // Verificar si el usuario necesita verificar su email
+            if ($user instanceof MustVerifyEmail && !$user->hasVerifiedEmail()) {
+                session()->flash('status', 'verification-link-sent');
+                return redirect()->route('verification.notice');
+            }
+            
+            // Si no necesita verificación o ya está verificado, redirigir al home
+            return redirect()->route('welcome.index');
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Hubo un problema al registrar el usuario.');
+            session()->flash('error', 'Hubo un problema al registrar el usuario: ' . $e->getMessage());
+            return redirect()->back();
         }
     }
 

@@ -1,0 +1,89 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Composer dependencies
+        run: composer install --optimize-autoloader --no-dev
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Create deployment archive
+        run: |
+          tar -czf deployment.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env' \
+            --exclude='storage/logs/*' \
+            --exclude='storage/framework/cache/*' \
+            --exclude='storage/framework/sessions/*' \
+            --exclude='storage/framework/views/*' \
+            .
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            # Variables
+            APP_DIR="/path/to/your/app"
+            BACKUP_DIR="/path/to/backups"
+            TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+            # Create backup
+            mkdir -p $BACKUP_DIR
+            if [ -d "$APP_DIR" ]; then
+              cp -r $APP_DIR $BACKUP_DIR/backup_$TIMESTAMP
+            fi
+
+            # Create app directory if it doesn't exist
+            mkdir -p $APP_DIR
+            cd $APP_DIR
+
+            # Download and extract deployment
+            wget -O deployment.tar.gz ${{ github.server_url }}/${{ github.repository }}/releases/download/deployment-${{ github.sha }}/deployment.tar.gz
+            tar -xzf deployment.tar.gz
+            rm deployment.tar.gz
+
+            # Set permissions
+            chown -R www-data:www-data .
+            chmod -R 755 .
+            chmod -R 775 storage bootstrap/cache
+
+            # Run Laravel commands
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan migrate --force
+
+            # Restart services if needed
+            sudo systemctl reload nginx
+            sudo systemctl restart php8.2-fpm

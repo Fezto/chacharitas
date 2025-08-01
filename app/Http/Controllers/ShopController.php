@@ -14,15 +14,11 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         $query = Product::query();
-
-        // Filtrar por una única categoría si está presente en la URL
         $selectedCategory = $request->query('category');
         if (!empty($selectedCategory)) {
-            // Ahora se filtra directamente por el campo category_id
             $query->where('category_id', $selectedCategory);
         }
 
-        // Recuperar productos
         $products = $query->get();
 
         return view('shop', [

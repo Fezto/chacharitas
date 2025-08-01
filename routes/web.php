@@ -6,6 +6,7 @@ use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\VerifyEmailController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
@@ -19,7 +20,20 @@ Route::get('/shop/{id}', [ShopController::class, 'show'])->name('shop.show');
 Route::post('/products/filter', [ShopController::class, 'filter'])->name('shop.filter');
 
 
-Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+// Ruta para mostrar la vista de verificación de email
+Route::view('/email/verify', 'email-verify')
+    ->middleware('auth')
+    ->name('verification.notice');
+
+// Ruta para reenviar el link de verificación
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/contact', function () {
     return view('contact');
@@ -27,7 +41,7 @@ Route::get('/contact', function () {
 
 Route::get('/add-product', function () {
     return view('add-product');
-})/* ->middleware('auth') */ ->name('add-product.index');
+})/* ->middleware(['auth', 'verified']) */->name('add-product.index');
 
 
 Route::get('/shipping/{product}', [ShippingController::class, 'index'])
