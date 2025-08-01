@@ -130,7 +130,27 @@ jobs:
             
             # Reiniciar servicios
             echo "🔄 Reiniciando servicios..."
-            sudo systemctl restart php8.2-fpm
+            
+            # Detectar el nombre correcto del servicio PHP-FPM
+            if sudo systemctl list-units --type=service | grep -q "php8.2-fpm"; then
+              PHP_SERVICE="php8.2-fpm"
+            elif sudo systemctl list-units --type=service | grep -q "php-fpm"; then
+              PHP_SERVICE="php-fpm"
+            elif sudo systemctl list-units --type=service | grep -q "php8.2"; then
+              PHP_SERVICE="php8.2"
+            else
+              echo "⚠️  No se encontró servicio PHP-FPM activo, saltando reinicio..."
+              PHP_SERVICE=""
+            fi
+            
+            # Reiniciar PHP-FPM si se encontró el servicio
+            if [ ! -z "$PHP_SERVICE" ]; then
+              echo "📱 Reiniciando $PHP_SERVICE..."
+              sudo systemctl restart $PHP_SERVICE
+            fi
+            
+            # Reiniciar Nginx
+            echo "🌐 Reiniciando Nginx..."
             sudo nginx -t && sudo systemctl reload nginx
             
             # Desactivar modo mantenimiento
