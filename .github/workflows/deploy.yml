@@ -16,29 +16,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2) Setup SSH agent con passphrase (Método alternativo con password)
-      - name: Setup SSH connection
+      # 2) Configurar SSH Agent con passphrase
+      - name: Setup SSH agent with passphrase
         env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          # Instalar sshpass para autenticación por contraseña
-          sudo apt-get update
-          sudo apt-get install -y sshpass
+          # Inicia el agente en el socket definido
+          ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
 
-          # Agregar host a known_hosts
+          # Crea un pequeño helper que devuelva la passphrase
+          echo 'echo $SSH_PASSPHRASE' > ~/.ssh_askpass
+          chmod +x ~/.ssh_askpass
+
+          # Añade tu clave al agente usando SSH_ASKPASS
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' \
+            | DISPLAY=none SSH_ASKPASS=~/.ssh_askpass ssh-add - > /dev/null
+
+          # Comprueba que quedó cargada
+          ssh-add -l
+
+          # Guarda la huella de tu host para no preguntar luego
           mkdir -p ~/.ssh
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
 
-      # 3) Conectar por SSH y desplegar (usando contraseña)
+      # 3) Conectar por SSH y desplegar
       - name: SSH Deploy Laravel Application
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
             set -e
             
             # Variables de configuración
