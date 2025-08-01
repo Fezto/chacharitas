@@ -93,10 +93,20 @@ jobs:
               npm ci --omit=dev
             fi
             
-            # Configurar permisos (el usuario deploy ya es propietario, solo ajustamos permisos específicos)
+            # Configurar permisos de forma segura
             echo "🔐 Configurando permisos..."
-            chmod -R 755 $APP_DIR
-            chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache
+            
+            # Solo cambiar permisos de archivos que el usuario deploy puede modificar
+            find $APP_DIR -type f -user deploy -exec chmod 644 {} \;
+            find $APP_DIR -type d -user deploy -exec chmod 755 {} \;
+            
+            # Para storage y cache, usar sudo solo si es necesario
+            if [ -w "$APP_DIR/storage" ]; then
+              chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache 2>/dev/null || true
+            else
+              echo "⚠️  Algunos archivos en storage requieren permisos de administrador..."
+              sudo chmod -R 775 $APP_DIR/storage $APP_DIR/bootstrap/cache || true
+            fi
             
             # Asegurar que www-data tenga acceso a storage y cache
             sudo chgrp -R www-data $APP_DIR/storage $APP_DIR/bootstrap/cache
