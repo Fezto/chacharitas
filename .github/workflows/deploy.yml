@@ -52,7 +52,6 @@ jobs:
             
             # Variables de configuración
             APP_DIR="/var/www/html/chacharitas"
-            BACKUP_DIR="/var/backups/chacharitas"
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             
             echo "🚀 Iniciando deployment de Chacharitas..."
@@ -60,9 +59,9 @@ jobs:
             # Crear backup si existe la aplicación
             if [ -d "$APP_DIR" ]; then
               echo "📦 Creando backup..."
-              sudo mkdir -p $BACKUP_DIR
-              sudo cp -r $APP_DIR $BACKUP_DIR/backup_$TIMESTAMP
-              echo "✅ Backup creado en $BACKUP_DIR/backup_$TIMESTAMP"
+              mkdir -p $HOME/backups/chacharitas
+              cp -r $APP_DIR $HOME/backups/chacharitas/backup_$TIMESTAMP
+              echo "✅ Backup creado en $HOME/backups/chacharitas/backup_$TIMESTAMP"
             fi
             
             # Navegar al directorio de la aplicación
