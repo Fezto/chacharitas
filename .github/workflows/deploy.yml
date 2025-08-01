@@ -51,7 +51,7 @@ jobs:
             set -e
             
             # Variables de configuración
-            APP_DIR="/var/www/chacharitas"
+            APP_DIR="/var/www/html/chacharitas"
             BACKUP_DIR="/var/backups/chacharitas"
             TIMESTAMP=$(date +%Y%m%d_%H%M%S)
             
