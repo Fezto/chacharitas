@@ -84,10 +84,13 @@ jobs:
             # Instalar dependencias de Node.js y compilar assets
             if [ -f "package.json" ]; then
               echo "📦 Instalando dependencias de Node.js..."
-              npm ci --production
+              npm ci
               
               echo "🏗️ Compilando assets..."
               npm run build
+              
+              echo "🧹 Limpiando node_modules de desarrollo..."
+              npm ci --omit=dev
             fi
             
             # Configurar permisos (el usuario deploy ya es propietario, solo ajustamos permisos específicos)
