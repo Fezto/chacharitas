@@ -64,11 +64,23 @@ class FedexServiceProvider
 
     public function createShipment(array $shipmentData, string $transactionId): ?string
     {
+        \Log::debug('FedEx createShipment called', [
+            'transactionId' => $transactionId,
+            'config' => [
+                'baseUrl' => $this->baseUrl,
+                'key' => substr($this->key, 0, 10) . '...',
+                'secret' => substr($this->secret, 0, 10) . '...',
+                'account' => $this->account
+            ]
+        ]);
+
         $token = $this->getToken();
         if (! $token) {
             \Log::error('FedEx createShipment: no token');
             return null;
         }
+
+        \Log::debug('FedEx token obtained successfully');
 
         $response = Http::withToken($token)
             ->withHeaders([
@@ -80,8 +92,16 @@ class FedexServiceProvider
 
         $body = $response->json();
 
+        \Log::debug('FedEx createShipment response', [
+            'status' => $response->status(),
+            'body' => $body
+        ]);
+
         if (! $response->ok()) {
-            \Log::error('FedEx createShipment failed', $body);
+            \Log::error('FedEx createShipment failed', [
+                'status' => $response->status(),
+                'body' => $body
+            ]);
             return null;
         }
 
@@ -96,10 +116,17 @@ class FedexServiceProvider
         }
 
         if (! $link) {
-            \Log::error('FedEx createShipment: label link not found in response', $body);
+            \Log::error('FedEx createShipment: label link not found in response', [
+                'full_response' => $body,
+                'searched_paths' => [
+                    'output.transactionShipments.0.labels.0.link',
+                    'output.transactionShipments.0.pieceResponses.0.packageDocuments.0.url'
+                ]
+            ]);
             return null;
         }
 
+        \Log::info('FedEx createShipment successful', ['labelUrl' => $link]);
         return $link;
     }
 

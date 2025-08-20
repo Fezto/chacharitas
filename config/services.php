@@ -26,8 +26,9 @@ return [
 
     'fedex' => [
         'base_url' => env('FEDEX_BASE_URL'), // URL de la API de FedEx
-        'api_key' => env('FEDEX_KEY'), // Tu clave API de Shippo
-        'secret' => env('FEDEX_SECRET'), // El Object ID de DHL
+        'key' => env('FEDEX_KEY'), // Tu clave API de FedEx - para FedExShippingService
+        'api_key' => env('FEDEX_KEY'), // Tu clave API de FedEx - para FedexServiceProvider
+        'secret' => env('FEDEX_SECRET'), // El Secret de FedEx
         'account_number' => env('FEDEX_ACCOUNT_NUMBER'), // Tu número de cuenta de FedEx
     ],
 

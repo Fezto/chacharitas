@@ -71,7 +71,7 @@
                                 <input type="hidden" name="to_name"      value="{{ request('to_name') }}">
                                 <input type="hidden" name="to_phone"     value="{{ request('to_phone') }}">
                                 <input type="hidden" name="weight"       value="{{ request('weight') }}">
-                                <input type="hidden" name="service_type" value="{{ data_get($rate, 'serviceType.type') }}">
+                                <input type="hidden" name="service_type" value="{{ $rate['serviceType'] ?? 'FEDEX_GROUND' }}">
 
                                 <button type="submit" class="btn btn-success w-full mt-2">
                                     Comprar etiqueta

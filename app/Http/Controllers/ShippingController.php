@@ -45,6 +45,7 @@ class ShippingController extends Controller
     {
         $txId = "624deea6-b709-470c-8c39-4b5511281492";
 
+        // Usar direcciones de prueba oficiales de FedEx (EE.UU.)
         $payload = [
             'mergeLabelDocOption'  => 'LABELS_AND_DOCS',
             'labelResponseOptions' => 'URL_ONLY',
@@ -58,8 +59,8 @@ class ShippingController extends Controller
             'requestedShipment' => [
                 'shipper' => [
                     'contact' => [
-                        'personName'  => config('app.name'),
-                        'phoneNumber' => "5551234567",
+                        'personName'  => 'Chacharitas Store',
+                        'phoneNumber' => '5551234567',
                     ],
                     'address' => [
                         'streetLines'         => ['10 FedEx Parkway'],
@@ -72,21 +73,20 @@ class ShippingController extends Controller
 
                 'recipients' => [[
                     'contact' => [
-                        'personName'  => 'Ayrton',
-                        'phoneNumber' => '4421941607',
+                        'personName'  => $request->input('to_name', 'Test Recipient'),
+                        'phoneNumber' => $request->input('to_phone', '5555551234'),
                     ],
                     'address' => [
                         'streetLines'         => ['1600 Amphitheatre Parkway'],
                         'city'                => 'Mountain View',
                         'stateOrProvinceCode' => 'CA',
-                        'postalCode'          => '94043', // <- ahora sí coincide con CA
+                        'postalCode'          => '94043',
                         'countryCode'         => 'US',
                     ],
                 ]],
 
-
                 'pickupType'    => 'DROPOFF_AT_FEDEX_LOCATION',
-                'serviceType'   => 'FEDEX_GROUND',
+                'serviceType'   => $request->input('service_type') ?: 'FEDEX_GROUND',
                 'packagingType' => 'YOUR_PACKAGING',
 
                 'shippingChargesPayment' => [
@@ -109,18 +109,33 @@ class ShippingController extends Controller
                 'requestedPackageLineItems' => [[
                     'sequenceNumber' => 1,
                     'weight' => [
-                        'units' => 'KG',
-                        'value' => $request->input('weight', 1),
+                        'units' => 'LB',
+                        'value' => min(floatval($request->input('weight', 1)) * 2.20462, 22), // Convertir kg a lb, max 22 lb
                     ],
+                    'dimensions' => [
+                        'length' => 10, // pulgadas
+                        'width' => 6,   // pulgadas  
+                        'height' => 4,  // pulgadas
+                        'units' => 'IN'
+                    ]
                 ]],
             ],
         ];
 
-
-        // Para depurar: mira el payload antes de enviar
-        \Log::debug('FedEx payload', $payload);
+        \Log::debug('FedEx payload for sandbox test', $payload);
 
         $labelUrl = $this->fedex->createShipment($payload, $txId);
+
+        // Verificar que tengamos una URL válida antes de enviar el email
+        if (!$labelUrl) {
+            \Log::error('ShippingController: labelUrl is null, cannot send email', [
+                'product_id' => $product->id,
+                'txId' => $txId
+            ]);
+            
+            return redirect()->route('shop.index')
+                ->with('error', 'Error al generar la guía de envío. Por favor intenta nuevamente.');
+        }
 
         // Lo enviamos por correo al vendedor
         Mail::to($product->user->email)
