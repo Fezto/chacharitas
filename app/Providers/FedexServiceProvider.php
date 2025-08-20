@@ -14,10 +14,10 @@ class FedexServiceProvider
 
     public function __construct()
     {
-        $this->baseUrl = config('services.fedex.base_url');
-        $this->key     = config('services.fedex.api_key');
-        $this->secret  = config('services.fedex.secret');
-        $this->account = config('services.fedex.account_number');
+        $this->baseUrl = config('services.fedex.base_url', 'https://apis-sandbox.fedex.com');
+        $this->key     = config('services.fedex.api_key', '');
+        $this->secret  = config('services.fedex.secret', '');
+        $this->account = config('services.fedex.account_number', '');
     }
 
     public function getToken(): ?string

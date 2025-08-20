@@ -16,10 +16,10 @@ class FedExShippingService
 
     public function __construct()
     {
-        $this->baseUrl = config('services.fedex.base_url');
-        $this->apiKey = config('services.fedex.key');
-        $this->secretKey = config('services.fedex.secret');
-        $this->accountNumber = config('services.fedex.account_number');
+        $this->baseUrl = config('services.fedex.base_url', 'https://apis-sandbox.fedex.com');
+        $this->apiKey = config('services.fedex.key', '');
+        $this->secretKey = config('services.fedex.secret', '');
+        $this->accountNumber = config('services.fedex.account_number', '');
     }
 
     /**
